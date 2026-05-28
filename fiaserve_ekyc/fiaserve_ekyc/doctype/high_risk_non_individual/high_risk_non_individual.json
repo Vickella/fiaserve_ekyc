@@ -1,6 +1,6 @@
 {
   "name": "High Risk Non-Individual",
-  "module": "FIASERV eKYC",
+  "module": "FIASERVE EKYC",
   "doctype": "DocType",
   "autoname": "format:HNI-{YYYY}-{#####}",
   "title_field": "full_name",
