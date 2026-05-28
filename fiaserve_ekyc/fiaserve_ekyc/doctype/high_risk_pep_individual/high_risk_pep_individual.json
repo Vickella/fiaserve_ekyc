@@ -1,0 +1,91 @@
+{
+  "name": "High Risk PEP Individual",
+  "module": "FIASERV eKYC",
+  "doctype": "DocType",
+  "autoname": "format:PEP-{YYYY}-{#####}",
+  "title_field": "full_name",
+  "fields": [
+    {
+      "fieldname": "full_name",
+      "fieldtype": "Data",
+      "label": "Full Name of Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "date_of_birth",
+      "fieldtype": "Date",
+      "label": "Date of Birth"
+    },
+    {
+      "fieldname": "country_of_residence",
+      "fieldtype": "Link",
+      "options": "Country",
+      "label": "Country of Residence",
+      "reqd": 1
+    },
+    {
+      "fieldname": "residential_address",
+      "fieldtype": "Text",
+      "label": "Residential Address",
+      "reqd": 1
+    },
+    {
+      "fieldname": "source_of_funds",
+      "fieldtype": "Text",
+      "label": "Source of Funds",
+      "reqd": 1
+    },
+    {
+      "fieldname": "source_of_wealth",
+      "fieldtype": "Text",
+      "label": "Source of Wealth",
+      "reqd": 1
+    },
+    {
+      "fieldname": "sanctions_status",
+      "fieldtype": "Select",
+      "label": "Screening Status",
+      "options": "Pending\nClear\nMatch Found\nReview Required",
+      "default": "Pending",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "sanctions_screened_on",
+      "fieldtype": "Datetime",
+      "label": "Last Screened On",
+      "read_only": 1
+    },
+    {
+      "fieldname": "id_document_upload",
+      "fieldtype": "Attach",
+      "label": "ID / Company Document"
+    },
+    {
+      "fieldname": "proof_of_address",
+      "fieldtype": "Attach",
+      "label": "Proof of Address"
+    },
+    {
+      "fieldname": "source_of_funds_doc",
+      "fieldtype": "Attach",
+      "label": "Source of Funds Document"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "All",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}
