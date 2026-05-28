@@ -84,7 +84,16 @@ def _update_customer_status(doctype: str, docname: str, status: str):
 	frappe.db.commit()
 
 
+def _mark_screening_started(doc) -> bool:
+	if getattr(doc.flags, "_fiaserve_screening_started", False):
+		return False
+	doc.flags._fiaserve_screening_started = True
+	return True
+
+
 def screen_individual(doc, method=None):
+	if not _mark_screening_started(doc):
+		return
 	api_resp = _search_entity(doc.full_name, schema="Person")
 	matches = _extract_matches(api_resp)
 	status = _save_screening("Individual Sanctions Screening", "customer", doc.name, api_resp, matches, doc.full_name)
@@ -92,6 +101,8 @@ def screen_individual(doc, method=None):
 
 
 def screen_high_risk_pep(doc, method=None):
+	if not _mark_screening_started(doc):
+		return
 	api_resp = _search_entity(doc.full_name, schema="Person")
 	matches = _extract_matches(api_resp)
 	status = _save_screening("High Risk PEP Sanctions Screening", "customer", doc.name, api_resp, matches, doc.full_name)
@@ -99,6 +110,8 @@ def screen_high_risk_pep(doc, method=None):
 
 
 def screen_non_individual(doc, method=None):
+	if not _mark_screening_started(doc):
+		return
 	api_resp = _search_entity(doc.entity_name, schema="Organization")
 	matches = _extract_matches(api_resp)
 	status = _save_screening("Non-Individual Sanctions Screening", "customer", doc.name, api_resp, matches, doc.entity_name)
@@ -106,6 +119,8 @@ def screen_non_individual(doc, method=None):
 
 
 def screen_high_risk_non_individual(doc, method=None):
+	if not _mark_screening_started(doc):
+		return
 	api_resp = _search_entity(doc.entity_name, schema="Organization")
 	matches = _extract_matches(api_resp)
 	status = _save_screening("High Risk Non-Individual Sanctions Screening", "customer", doc.name, api_resp, matches, doc.entity_name)
