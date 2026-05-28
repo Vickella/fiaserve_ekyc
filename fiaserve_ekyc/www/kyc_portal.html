@@ -1,8 +1,25 @@
 {% extends "templates/web.html" %}
+{% block title %}KYC Portal - FIASERV eKYC{% endblock %}
+{% block head_include %}
+<link rel="stylesheet" href="/assets/fiaserve_ekyc/css/fiaserve_ekyc.css">
+{% endblock %}
 {% block page_content %}
-<div class="fiaserv-hero">
-  <img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIASERV" style="max-width:280px;"/>
-  <h2>FIASERV eKYC Portal</h2>
-  <p>Select customer type to start KYC capture.</p>
+{% set header_title = "FIASERV eKYC Platform" %}
+<header class="fias-header">
+  <div class="logo-wrap"><a href="/kyc_portal"><img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIAServ Logo"></a></div>
+  <div class="header-title">{{ header_title }}</div>
+  <div class="header-meta">VerityCore Consultancy<br>devs@veritycore.co.zw</div>
+</header>
+<div class="fias-page">
+  <h1 style="color:var(--fias-navy);margin-bottom:4px;">Customer KYC Capture</h1>
+  <p style="color:#6b7280;">Select the customer category to begin the eKYC process.</p>
+  <div class="category-grid">
+    <a href="/individual_kyc" class="category-card"><span class="card-icon">&#128100;</span><h3>Individual</h3><p>Standard KYC capture for individual persons.</p></a>
+    <a href="/high_risk_pep_kyc" class="category-card high-risk"><span class="card-icon">&#9888;</span><h3>Individual - High Risk / PEP</h3><p>High risk individuals, PEPs, and sanctioned persons.</p></a>
+    <a href="/non_individual_kyc" class="category-card"><span class="card-icon">&#127970;</span><h3>Non-Individual</h3><p>Companies, trusts, partnerships and other legal persons.</p></a>
+    <a href="/high_risk_non_individual_kyc" class="category-card high-risk"><span class="card-icon">&#128737;</span><h3>Non-Individual - High Risk / PEP</h3><p>High risk entities and PEP-associated legal persons.</p></a>
+  </div>
+  <div class="fias-footer">FIASERV eKYC &copy; {{ frappe.utils.now()[:4] }} - Developed by VerityCore Consultancy</div>
 </div>
+
 {% endblock %}

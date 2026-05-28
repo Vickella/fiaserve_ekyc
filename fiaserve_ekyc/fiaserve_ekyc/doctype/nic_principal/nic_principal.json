@@ -1,0 +1,47 @@
+{
+  "name": "NIC Principal",
+  "module": "FIASERVE EKYC",
+  "doctype": "DocType",
+  "autoname": "",
+  "title_field": "principal_name",
+  "fields": [
+    {
+      "fieldname": "principal_name",
+      "fieldtype": "Data",
+      "label": "Principal Name",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "role",
+      "fieldtype": "Select",
+      "label": "Role",
+      "options": "Director\nShareholder\nTrustee\nSettlor\nBeneficiary\nSignatory\nOther",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "id_type",
+      "fieldtype": "Select",
+      "label": "ID Type",
+      "options": "National ID\nPassport\nDriver's Licence\nResidence Permit\nWork Permit\nRefugee Document\nOther"
+    },
+    {
+      "fieldname": "id_number",
+      "fieldtype": "Data",
+      "label": "ID Number"
+    },
+    {
+      "fieldname": "nationality",
+      "fieldtype": "Link",
+      "label": "Nationality",
+      "options": "Country"
+    },
+    {
+      "fieldname": "id_document",
+      "fieldtype": "Attach",
+      "label": "ID Document"
+    }
+  ],
+  "permissions": [],
+  "istable": 1
+}

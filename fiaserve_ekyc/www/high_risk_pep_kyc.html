@@ -1,0 +1,74 @@
+{% extends "templates/web.html" %}
+{% block title %}High Risk / PEP KYC - FIASERV eKYC{% endblock %}
+{% block head_include %}
+<link rel="stylesheet" href="/assets/fiaserve_ekyc/css/fiaserve_ekyc.css">
+{% endblock %}
+{% block page_content %}
+{% set header_title = "High Risk / PEP KYC - FIASERV eKYC" %}
+<header class="fias-header">
+  <div class="logo-wrap"><a href="/kyc_portal"><img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIAServ Logo"></a></div>
+  <div class="header-title">{{ header_title }}</div>
+  <div class="header-meta">VerityCore Consultancy<br>devs@veritycore.co.zw</div>
+</header>
+<div class="fias-page">
+  <a href="/kyc_portal" class="fias-btn-secondary">Back to Portal</a>
+  <div class="fias-form-card">
+    <h2>High Risk / PEP Individual - KYC Form</h2>
+    <p style="color:#6b7280;font-size:0.85rem;margin-top:4px;">Fields marked <span style="color:red;">*</span> are mandatory.</p>
+    <div id="fias-alert" class="fias-alert"></div>
+    <form id="kyc-form" onsubmit="return false;">
+      <div class="fias-section-title">Personal Information</div><div class="form-grid">
+<div class="form-group full-width"><label>Full Name of Customer <span class="required">*</span></label><input type="text" name="full_name" id="full_name" required></div>
+<div class="form-group"><label>Date of Birth <span class="required">*</span></label><input type="date" name="date_of_birth" id="date_of_birth" required></div>
+<div class="form-group"><label>ID Document Type <span class="required">*</span></label><select name="id_document_type" id="id_document_type" required><option value="">-- Select --</option><option>National ID</option><option>Passport</option><option>Driver's Licence</option><option>Residence Permit</option><option>Work Permit</option><option>Refugee Document</option><option>Other</option></select></div>
+<div class="form-group"><label>ID / Passport Number <span class="required">*</span></label><input type="text" name="national_id_number" id="national_id_number" required></div>
+<div class="form-group"><label>Place of Birth</label><input type="text" name="place_of_birth" id="place_of_birth"></div>
+<div class="form-group"><label>Country of Birth</label><input type="text" name="country_of_birth" id="country_of_birth"></div>
+<div class="form-group"><label>Country of Residence <span class="required">*</span></label><input type="text" name="country_of_residence" id="country_of_residence" required></div>
+<div class="form-group"><label>Risk Level</label><select name="risk_level" id="risk_level"><option value="">-- Select --</option><option>High</option><option>Very High</option></select></div>
+<div class="form-group"><label>PEP Designation / Political Position</label><input type="text" name="pep_designation" id="pep_designation"></div>
+<div class="form-group"><label>PEP Jurisdiction (Country)</label><input type="text" name="pep_jurisdiction" id="pep_jurisdiction"></div>
+<div class="form-group full-width"><label>Residential Address <span class="required">*</span></label><textarea name="residential_address" id="residential_address" required></textarea></div>
+</div>
+<div class="fias-section-title">Customer Representative (Where Applicable)</div><div class="form-grid"><div class="form-group full-width"><label><input type="checkbox" name="has_representative" id="has_representative" onchange="toggleSection(\'rep-section\', this.checked)"> This customer has an authorised representative</label></div></div><div id="rep-section" style="display:none;"><div class="form-grid">
+<div class="form-group"><label>Full Name of Representative</label><input type="text" name="representative_name" id="representative_name"></div>
+<div class="form-group"><label>Representative ID Type</label><select name="representative_id_type" id="representative_id_type"><option value="">-- Select --</option><option>National ID</option><option>Passport</option><option>Driver's Licence</option><option>Residence Permit</option><option>Work Permit</option><option>Refugee Document</option><option>Other</option></select></div>
+<div class="form-group"><label>Representative ID Number</label><input type="text" name="representative_id_number" id="representative_id_number"></div>
+<div class="form-group"><label>Capacity / Role</label><select name="representative_capacity" id="representative_capacity"><option value="">-- Select --</option><option>Director</option><option>Shareholder</option><option>Trustee</option><option>Settlor</option><option>Beneficiary</option><option>Power of Attorney</option><option>Legal Guardian</option><option>Other</option></select></div>
+</div></div>
+<div class="fias-section-title">Source of Funds</div><div class="form-grid">
+<div class="form-group"><label>Source of Funds <span class="required">*</span></label><select name="source_of_funds" id="source_of_funds" required><option value="">-- Select --</option><option>Employment Income</option><option>Business Income</option><option>Investment Returns</option><option>Pension / Retirement</option><option>Inheritance</option><option>Gift</option><option>Sale of Property</option><option>Sale of Business</option><option>Loan</option><option>Government Grant</option><option>Other</option></select></div>
+<div class="form-group full-width"><label>Source of Funds - Details</label><textarea name="source_of_funds_details" id="source_of_funds_details"></textarea></div>
+<div class="form-group full-width"><label>Source of Wealth <span class="required">*</span></label><textarea name="source_of_wealth" id="source_of_wealth" required></textarea></div>
+</div>
+<div class="fias-section-title">Adverse Media Screening</div><div class="form-grid">
+<div class="form-group full-width"><label>Adverse / Negative Media Screening Notes</label><textarea name="adverse_media_notes" id="adverse_media_notes"></textarea></div>
+<div class="form-group"><label>Adverse Media Screening Screenshot</label><input type="file" name="adverse_media_doc" id="adverse_media_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+</div>
+<div class="fias-section-title">Senior Management Sign-Off</div><div class="form-grid">
+<div class="form-group full-width"><label><input type="checkbox" name="senior_mgmt_approval" required> Senior Management Approval Obtained <span class="required">*</span></label></div>
+<div class="form-group"><label>Name of Approving Officer</label><input type="text" name="approving_officer" id="approving_officer"></div>
+<div class="form-group"><label>Approval Date</label><input type="date" name="approval_date" id="approval_date"></div>
+<div class="form-group full-width"><label>Approval Notes / Justification</label><textarea name="approval_notes" id="approval_notes"></textarea></div>
+<div class="form-group"><label>Senior Management Sign-Off Document</label><input type="file" name="senior_mgmt_signoff_doc" id="senior_mgmt_signoff_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+</div>
+<div class="fias-section-title">Supporting Documents</div><div class="form-grid">
+<div class="form-group"><label>ID Document / Passport / Permit</label><input type="file" name="id_document_upload" id="id_document_upload" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Proof of Residential Address</label><input type="file" name="proof_of_address" id="proof_of_address" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Source of Funds Document</label><input type="file" name="source_of_funds_doc" id="source_of_funds_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Source of Wealth Document</label><input type="file" name="source_of_wealth_doc" id="source_of_wealth_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group" id="rep-doc-field" style="display:none;"><label>Representative Authorisation Document</label><input type="file" name="representative_auth_doc" id="representative_auth_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+</div><div class="fias-section-title">Additional Notes</div><div class="form-grid">
+<div class="form-group full-width"><label>Notes</label><textarea name="notes" id="notes"></textarea></div>
+</div>
+      <div style="margin-top:28px;display:flex;align-items:center;gap:12px;">
+        <button type="button" class="fias-btn-primary" onclick="submitKYCForm('High Risk PEP Individual')">Save &amp; Submit KYC</button>
+        <span id="saving-indicator" style="display:none;color:#6b7280;font-size:0.85rem;">Saving and running sanctions screening...</span>
+      </div>
+    </form>
+  </div>
+  <div class="fias-footer">FIASERV eKYC &copy; {{ frappe.utils.now()[:4] }} - Developed by VerityCore Consultancy</div>
+</div>
+<script src="/assets/fiaserve_ekyc/js/fiaserve_ekyc.js"></script>
+<script>populateCountries(["country_of_birth", "country_of_residence", "pep_jurisdiction"]);</script>
+{% endblock %}

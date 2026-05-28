@@ -1,0 +1,66 @@
+{% extends "templates/web.html" %}
+{% block title %}Non-Individual KYC - FIASERV eKYC{% endblock %}
+{% block head_include %}
+<link rel="stylesheet" href="/assets/fiaserve_ekyc/css/fiaserve_ekyc.css">
+{% endblock %}
+{% block page_content %}
+{% set header_title = "Non-Individual KYC - FIASERV eKYC" %}
+<header class="fias-header">
+  <div class="logo-wrap"><a href="/kyc_portal"><img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIAServ Logo"></a></div>
+  <div class="header-title">{{ header_title }}</div>
+  <div class="header-meta">VerityCore Consultancy<br>devs@veritycore.co.zw</div>
+</header>
+<div class="fias-page">
+  <a href="/kyc_portal" class="fias-btn-secondary">Back to Portal</a>
+  <div class="fias-form-card">
+    <h2>Non-Individual Customer - KYC Form</h2>
+    <p style="color:#6b7280;font-size:0.85rem;margin-top:4px;">Fields marked <span style="color:red;">*</span> are mandatory.</p>
+    <div id="fias-alert" class="fias-alert"></div>
+    <form id="kyc-form" onsubmit="return false;">
+      <div class="fias-section-title">Entity Information</div><div class="form-grid">
+<div class="form-group full-width"><label>Full Name of Customer (Entity) <span class="required">*</span></label><input type="text" name="entity_name" id="entity_name" required></div>
+<div class="form-group"><label>Entity Type <span class="required">*</span></label><select name="entity_type" id="entity_type" required><option value="">-- Select --</option><option>Company</option><option>Trust</option><option>Partnership</option><option>Foundation</option><option>Association</option><option>Other</option></select></div>
+<div class="form-group"><label>Registration / Incorporation Number <span class="required">*</span></label><input type="text" name="registration_number" id="registration_number" required></div>
+<div class="form-group"><label>Date of Incorporation</label><input type="date" name="date_of_incorporation" id="date_of_incorporation"></div>
+<div class="form-group"><label>Place of Incorporation</label><input type="text" name="place_of_incorporation" id="place_of_incorporation"></div>
+<div class="form-group"><label>Country of Incorporation <span class="required">*</span></label><input type="text" name="country_of_incorporation" id="country_of_incorporation" required></div>
+<div class="form-group"><label>Place / Country of Business Operations</label><input type="text" name="country_of_operations" id="country_of_operations"></div>
+<div class="form-group"><label>Risk Level</label><select name="risk_level" id="risk_level"><option value="">-- Select --</option><option>Low</option><option>Medium</option><option>High</option><option>Very High</option></select></div>
+<div class="form-group full-width"><label>Head Office Address <span class="required">*</span></label><textarea name="head_office_address" id="head_office_address" required></textarea></div>
+</div><div class="fias-section-title">Directors / Shareholders / Trustees / Beneficiaries</div>
+<table class="principals-table"><thead><tr><th>Name</th><th>Role</th><th>ID Type</th><th>ID Number</th><th>Nationality</th><th></th></tr></thead><tbody id="principals-table-body"></tbody></table>
+<button type="button" class="fias-btn-secondary" onclick="addPrincipalRow()">Add Principal</button>
+<div class="fias-section-title">Customer Representative (Where Applicable)</div><div class="form-grid"><div class="form-group full-width"><label><input type="checkbox" name="has_representative" id="has_representative" onchange="toggleSection(\'rep-section\', this.checked)"> This customer has an authorised representative</label></div></div><div id="rep-section" style="display:none;"><div class="form-grid">
+<div class="form-group"><label>Full Name of Representative</label><input type="text" name="representative_name" id="representative_name"></div>
+<div class="form-group"><label>Capacity / Role</label><select name="representative_capacity" id="representative_capacity"><option value="">-- Select --</option><option>Director</option><option>Shareholder</option><option>Trustee</option><option>Settlor</option><option>Beneficiary</option><option>Power of Attorney</option><option>Legal Guardian</option><option>Other</option></select></div>
+</div></div><div class="fias-section-title">Source of Funds & Tax</div><div class="form-grid">
+<div class="form-group"><label>Source of Funds <span class="required">*</span></label><select name="source_of_funds" id="source_of_funds" required><option value="">-- Select --</option><option>Employment Income</option><option>Business Income</option><option>Investment Returns</option><option>Pension / Retirement</option><option>Inheritance</option><option>Gift</option><option>Sale of Property</option><option>Sale of Business</option><option>Loan</option><option>Government Grant</option><option>Other</option></select></div>
+<div class="form-group"><label>Tax Status / TIN Number</label><input type="text" name="tax_status" id="tax_status"></div>
+<div class="form-group full-width"><label>Source of Funds - Details</label><textarea name="source_of_funds_details" id="source_of_funds_details"></textarea></div>
+<div class="form-group full-width"><label>Tax Compliance Notes</label><textarea name="tax_compliance_notes" id="tax_compliance_notes"></textarea></div>
+</div>
+<div class="fias-section-title">Supporting Documents</div><div class="form-grid">
+<div class="form-group"><label>Certificate of Incorporation</label><input type="file" name="certificate_of_incorporation" id="certificate_of_incorporation" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>CR6 (Directors Register)</label><input type="file" name="cr6_document" id="cr6_document" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>CR2 (Shareholders Register)</label><input type="file" name="cr2_document" id="cr2_document" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Memorandum & Articles of Association</label><input type="file" name="memo_articles" id="memo_articles" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Trust Deed (If applicable)</label><input type="file" name="trust_deed" id="trust_deed" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Company Profile / Prospectus</label><input type="file" name="company_profile" id="company_profile" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Source of Funds Document</label><input type="file" name="source_of_funds_doc" id="source_of_funds_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Tax Returns / Capital Gains Tax Document</label><input type="file" name="tax_returns_doc" id="tax_returns_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group"><label>Directors / Principals ID Documents</label><input type="file" name="directors_id_docs" id="directors_id_docs" accept=".pdf,.jpg,.jpeg,.png"></div>
+<div class="form-group" id="rep-doc-field" style="display:none;"><label>Representative Authorisation Document</label><input type="file" name="representative_auth_doc" id="representative_auth_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+</div><div class="fias-section-title">Additional Notes</div><div class="form-grid">
+<div class="form-group full-width"><label>Notes</label><textarea name="notes" id="notes"></textarea></div>
+</div>
+      <div style="margin-top:28px;display:flex;align-items:center;gap:12px;">
+        <button type="button" class="fias-btn-primary" onclick="submitKYCForm('Non-Individual Customer')">Save &amp; Submit KYC</button>
+        <span id="saving-indicator" style="display:none;color:#6b7280;font-size:0.85rem;">Saving and running sanctions screening...</span>
+      </div>
+    </form>
+  </div>
+  <div class="fias-footer">FIASERV eKYC &copy; {{ frappe.utils.now()[:4] }} - Developed by VerityCore Consultancy</div>
+</div>
+<script src="/assets/fiaserve_ekyc/js/fiaserve_ekyc.js"></script>
+<script>populateCountries(["country_of_incorporation", "country_of_operations"]);</script>
+{% endblock %}

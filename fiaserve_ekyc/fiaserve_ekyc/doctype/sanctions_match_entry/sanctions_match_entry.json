@@ -1,0 +1,67 @@
+{
+  "name": "Sanctions Match Entry",
+  "module": "FIASERVE EKYC",
+  "doctype": "DocType",
+  "autoname": "",
+  "title_field": "entity_name",
+  "fields": [
+    {
+      "fieldname": "entity_id",
+      "fieldtype": "Data",
+      "label": "Entity ID",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "entity_name",
+      "fieldtype": "Data",
+      "label": "Entity Name",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "match_score",
+      "fieldtype": "Float",
+      "label": "Match Score",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "datasets",
+      "fieldtype": "Data",
+      "label": "Sanction Lists / Datasets"
+    },
+    {
+      "fieldname": "is_pep",
+      "fieldtype": "Check",
+      "label": "Is PEP",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "is_sanctioned",
+      "fieldtype": "Check",
+      "label": "Is Sanctioned",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "countries",
+      "fieldtype": "Data",
+      "label": "Associated Countries"
+    },
+    {
+      "fieldname": "birth_date",
+      "fieldtype": "Data",
+      "label": "Date of Birth (from API)"
+    },
+    {
+      "fieldname": "entity_url",
+      "fieldtype": "Data",
+      "label": "OpenSanctions URL"
+    },
+    {
+      "fieldname": "properties_json",
+      "fieldtype": "Code",
+      "label": "Full Properties (JSON)",
+      "options": "JSON"
+    }
+  ],
+  "permissions": [],
+  "istable": 1
+}

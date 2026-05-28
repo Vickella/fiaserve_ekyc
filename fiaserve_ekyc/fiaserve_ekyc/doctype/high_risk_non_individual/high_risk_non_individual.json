@@ -3,26 +3,48 @@
   "module": "FIASERVE EKYC",
   "doctype": "DocType",
   "autoname": "format:HNI-{YYYY}-{#####}",
-  "title_field": "full_name",
+  "title_field": "entity_name",
   "fields": [
     {
-      "fieldname": "full_name",
+      "fieldname": "section_entity",
+      "fieldtype": "Section Break",
+      "label": "Entity Information"
+    },
+    {
+      "fieldname": "entity_name",
       "fieldtype": "Data",
-      "label": "Full Name of Customer",
+      "label": "Full Name of Customer (Entity)",
       "reqd": 1,
       "in_list_view": 1
     },
     {
-      "fieldname": "place_of_incorporation",
-      "fieldtype": "Data",
-      "label": "Place of Incorporation",
+      "fieldname": "entity_type",
+      "fieldtype": "Select",
+      "label": "Entity Type",
+      "options": "Company\nTrust\nPartnership\nFoundation\nAssociation\nOther",
       "reqd": 1
     },
     {
-      "fieldname": "country_of_business_operations",
+      "fieldname": "registration_number",
+      "fieldtype": "Data",
+      "label": "Registration / Incorporation Number",
+      "reqd": 1
+    },
+    {
+      "fieldname": "date_of_incorporation",
+      "fieldtype": "Date",
+      "label": "Date of Incorporation"
+    },
+    {
+      "fieldname": "place_of_incorporation",
+      "fieldtype": "Data",
+      "label": "Place of Incorporation"
+    },
+    {
+      "fieldname": "country_of_incorporation",
       "fieldtype": "Link",
+      "label": "Country of Incorporation",
       "options": "Country",
-      "label": "Country of Business Operations",
       "reqd": 1
     },
     {
@@ -32,16 +54,84 @@
       "reqd": 1
     },
     {
+      "fieldname": "country_of_operations",
+      "fieldtype": "Link",
+      "label": "Place / Country of Business Operations",
+      "options": "Country"
+    },
+    {
+      "fieldname": "risk_level",
+      "fieldtype": "Select",
+      "label": "Risk Level",
+      "options": "High\nVery High",
+      "default": "High",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "section_principals",
+      "fieldtype": "Section Break",
+      "label": "Directors / Shareholders / Trustees / Beneficiaries"
+    },
+    {
+      "fieldname": "principals_table",
+      "fieldtype": "Table",
+      "label": "Principals",
+      "options": "NIC Principal"
+    },
+    {
+      "fieldname": "section_representative",
+      "fieldtype": "Section Break",
+      "label": "Customer Representative (Where Applicable)"
+    },
+    {
+      "fieldname": "has_representative",
+      "fieldtype": "Check",
+      "label": "Has Customer Representative"
+    },
+    {
+      "fieldname": "representative_name",
+      "fieldtype": "Data",
+      "label": "Full Name of Representative",
+      "depends_on": "eval:doc.has_representative==1"
+    },
+    {
+      "fieldname": "representative_capacity",
+      "fieldtype": "Select",
+      "label": "Capacity / Role",
+      "options": "Director\nShareholder\nTrustee\nSettlor\nBeneficiary\nPower of Attorney\nLegal Guardian\nOther",
+      "depends_on": "eval:doc.has_representative==1"
+    },
+    {
+      "fieldname": "section_funds",
+      "fieldtype": "Section Break",
+      "label": "Source of Funds & Tax"
+    },
+    {
       "fieldname": "source_of_funds",
-      "fieldtype": "Text",
+      "fieldtype": "Select",
       "label": "Source of Funds",
+      "options": "Employment Income\nBusiness Income\nInvestment Returns\nPension / Retirement\nInheritance\nGift\nSale of Property\nSale of Business\nLoan\nGovernment Grant\nOther",
       "reqd": 1
     },
     {
-      "fieldname": "source_of_wealth",
+      "fieldname": "source_of_funds_details",
       "fieldtype": "Text",
-      "label": "Source of Wealth",
-      "reqd": 1
+      "label": "Source of Funds - Details"
+    },
+    {
+      "fieldname": "tax_status",
+      "fieldtype": "Data",
+      "label": "Tax Status / TIN Number"
+    },
+    {
+      "fieldname": "tax_compliance_notes",
+      "fieldtype": "Text",
+      "label": "Tax Compliance Notes"
+    },
+    {
+      "fieldname": "section_screening",
+      "fieldtype": "Section Break",
+      "label": "Sanctions & PEP Screening"
     },
     {
       "fieldname": "sanctions_status",
@@ -59,19 +149,129 @@
       "read_only": 1
     },
     {
-      "fieldname": "id_document_upload",
-      "fieldtype": "Attach",
-      "label": "ID / Company Document"
+      "fieldname": "section_wealth",
+      "fieldtype": "Section Break",
+      "label": "Source of Wealth"
     },
     {
-      "fieldname": "proof_of_address",
+      "fieldname": "source_of_wealth",
+      "fieldtype": "Text",
+      "label": "Source of Wealth",
+      "reqd": 1
+    },
+    {
+      "fieldname": "source_of_wealth_doc",
       "fieldtype": "Attach",
-      "label": "Proof of Address"
+      "label": "Source of Wealth Document"
+    },
+    {
+      "fieldname": "section_approval",
+      "fieldtype": "Section Break",
+      "label": "Senior Management Sign-Off"
+    },
+    {
+      "fieldname": "senior_mgmt_approval",
+      "fieldtype": "Check",
+      "label": "Senior Management Approval Obtained",
+      "reqd": 1
+    },
+    {
+      "fieldname": "approving_officer",
+      "fieldtype": "Data",
+      "label": "Name of Approving Officer"
+    },
+    {
+      "fieldname": "approval_date",
+      "fieldtype": "Date",
+      "label": "Approval Date"
+    },
+    {
+      "fieldname": "approval_notes",
+      "fieldtype": "Text",
+      "label": "Approval Notes / Justification"
+    },
+    {
+      "fieldname": "senior_mgmt_signoff_doc",
+      "fieldtype": "Attach",
+      "label": "Senior Management Sign-Off Document"
+    },
+    {
+      "fieldname": "section_documents",
+      "fieldtype": "Section Break",
+      "label": "Supporting Documents"
+    },
+    {
+      "fieldname": "certificate_of_incorporation",
+      "fieldtype": "Attach",
+      "label": "Certificate of Incorporation"
+    },
+    {
+      "fieldname": "cr6_document",
+      "fieldtype": "Attach",
+      "label": "CR6 (Directors Register)"
+    },
+    {
+      "fieldname": "cr2_document",
+      "fieldtype": "Attach",
+      "label": "CR2 (Shareholders Register)"
+    },
+    {
+      "fieldname": "memo_articles",
+      "fieldtype": "Attach",
+      "label": "Memorandum & Articles of Association"
+    },
+    {
+      "fieldname": "trust_deed",
+      "fieldtype": "Attach",
+      "label": "Trust Deed (If applicable)"
+    },
+    {
+      "fieldname": "company_profile",
+      "fieldtype": "Attach",
+      "label": "Company Profile / Prospectus"
     },
     {
       "fieldname": "source_of_funds_doc",
       "fieldtype": "Attach",
-      "label": "Source of Funds Document"
+      "label": "Source of Funds Document (Bank Statement / Audited Financials / Letter)"
+    },
+    {
+      "fieldname": "tax_returns_doc",
+      "fieldtype": "Attach",
+      "label": "Tax Returns / Capital Gains Tax Document"
+    },
+    {
+      "fieldname": "representative_auth_doc",
+      "fieldtype": "Attach",
+      "label": "Representative Authorisation Document",
+      "depends_on": "eval:doc.has_representative==1"
+    },
+    {
+      "fieldname": "directors_id_docs",
+      "fieldtype": "Attach",
+      "label": "Directors / Principals ID Documents"
+    },
+    {
+      "fieldname": "section_meta",
+      "fieldtype": "Section Break",
+      "label": "Record Metadata"
+    },
+    {
+      "fieldname": "kyc_officer",
+      "fieldtype": "Link",
+      "label": "KYC Officer",
+      "options": "User"
+    },
+    {
+      "fieldname": "capture_date",
+      "fieldtype": "Date",
+      "label": "Capture Date",
+      "default": "Today"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Additional Notes"
     }
   ],
   "permissions": [
@@ -88,5 +288,7 @@
       "write": 1,
       "create": 1
     }
-  ]
+  ],
+  "search_fields": "entity_name,registration_number",
+  "is_submittable": 0
 }

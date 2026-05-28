@@ -1,3 +1,129 @@
-frappe.ready(() => {
-  console.log('FIASERV eKYC loaded');
-});
+const COUNTRIES = ["Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Brazzaville)", "Congo (Kinshasa)", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea (North)", "Korea (South)", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"];
+
+function populateCountries(fieldIds) {
+  fieldIds.forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    COUNTRIES.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function toggleSection(sectionId, show) {
+  const el = document.getElementById(sectionId);
+  if (el) el.style.display = show ? "block" : "none";
+  const repDoc = document.getElementById("rep-doc-field");
+  if (repDoc) repDoc.style.display = show ? "block" : "none";
+}
+
+function showAlert(message, type = "info") {
+  const el = document.getElementById("fias-alert");
+  if (!el) return;
+  el.className = `fias-alert ${type}`;
+  el.innerHTML = message;
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function uploadFile(file, doctype, docname, fieldname) {
+  if (!file || !file.name) return null;
+  const formData = new FormData();
+  formData.append("file", file, file.name);
+  formData.append("is_private", "1");
+  formData.append("doctype", doctype);
+  formData.append("docname", docname);
+  formData.append("fieldname", fieldname);
+  formData.append("folder", "Home/Attachments");
+  const csrfToken = frappe.csrf_token || document.cookie.split("; ").find(r => r.startsWith("X-Frappe-CSRF-Token="))?.split("=")[1] || "";
+  const resp = await fetch("/api/method/upload_file", { method: "POST", headers: { "X-Frappe-CSRF-Token": csrfToken }, body: formData });
+  if (!resp.ok) return null;
+  const data = await resp.json();
+  return data.message?.file_url || null;
+}
+
+async function submitKYCForm(doctype) {
+  const form = document.getElementById("kyc-form");
+  if (!form) return;
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+  const saveBtn = form.querySelector(".fias-btn-primary");
+  const indicator = document.getElementById("saving-indicator");
+  saveBtn.disabled = true;
+  if (indicator) indicator.style.display = "inline";
+  showAlert("Saving KYC record...", "info");
+  const doc = { doctype };
+  const fileFields = [];
+  Array.from(form.elements).forEach(el => {
+    if (!el.name) return;
+    if (el.type === "file") {
+      if (el.files[0]) fileFields.push({ fieldname: el.name, file: el.files[0] });
+    } else if (el.type === "checkbox") {
+      doc[el.name] = el.checked ? 1 : 0;
+    } else if (el.tagName !== "BUTTON") {
+      doc[el.name] = el.value;
+    }
+  });
+  const principalRows = collectPrincipals();
+  if (principalRows.length) doc.principals_table = principalRows;
+  let docname;
+  try {
+    const result = await new Promise((resolve, reject) => {
+      frappe.call({ method: "frappe.client.insert", args: { doc }, callback: r => r.exc ? reject(r.exc) : resolve(r.message) });
+    });
+    docname = result.name;
+  } catch (err) {
+    showAlert(`Failed to save record: ${err}`, "error");
+    saveBtn.disabled = false;
+    if (indicator) indicator.style.display = "none";
+    return;
+  }
+  if (fileFields.length) {
+    showAlert("Uploading documents...", "info");
+    const uploadUpdates = {};
+    for (const { fieldname, file } of fileFields) {
+      const url = await uploadFile(file, doctype, docname, fieldname);
+      if (url) uploadUpdates[fieldname] = url;
+    }
+    if (Object.keys(uploadUpdates).length) {
+      await new Promise(resolve => {
+        frappe.call({ method: "frappe.client.set_value", args: { doctype, name: docname, fieldname: uploadUpdates }, callback: resolve });
+      });
+    }
+  }
+  const route = doctype.toLowerCase().replace(/\s+/g, "-");
+  showAlert(`KYC record <strong>${docname}</strong> saved successfully. Sanctions screening has been initiated. <a href="/app/${route}/${docname}" style="color:#1a2e6e;font-weight:700;">View Record</a>`, "success");
+  saveBtn.disabled = false;
+  if (indicator) indicator.style.display = "none";
+}
+
+function collectPrincipals() {
+  const table = document.getElementById("principals-table-body");
+  if (!table) return [];
+  const rows = [];
+  table.querySelectorAll("tr").forEach(tr => {
+    const row = { doctype: "NIC Principal" };
+    tr.querySelectorAll("input, select").forEach(inp => { if (inp.name) row[inp.name] = inp.value; });
+    if (row.principal_name) rows.push(row);
+  });
+  return rows;
+}
+
+function addPrincipalRow() {
+  const tbody = document.getElementById("principals-table-body");
+  if (!tbody) return;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><input type="text" name="principal_name" placeholder="Full name"></td>
+    <td><select name="role"><option>Director</option><option>Shareholder</option><option>Trustee</option><option>Settlor</option><option>Beneficiary</option><option>Signatory</option><option>Other</option></select></td>
+    <td><select name="id_type"><option>National ID</option><option>Passport</option><option>Driver's Licence</option><option>Residence Permit</option><option>Work Permit</option><option>Other</option></select></td>
+    <td><input type="text" name="id_number" placeholder="ID Number"></td>
+    <td><select name="nationality">${COUNTRIES.map(c => `<option>${c}</option>`).join("")}</select></td>
+    <td><button type="button" onclick="this.closest('tr').remove()">Remove</button></td>
+  `;
+  tbody.appendChild(tr);
+}

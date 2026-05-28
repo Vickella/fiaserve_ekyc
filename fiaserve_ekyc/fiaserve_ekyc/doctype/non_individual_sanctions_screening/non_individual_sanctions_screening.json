@@ -1,0 +1,105 @@
+{
+  "name": "Non-Individual Sanctions Screening",
+  "module": "FIASERVE EKYC",
+  "doctype": "DocType",
+  "autoname": "format:NISS-{YYYY}-{#####}",
+  "title_field": "customer",
+  "fields": [
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Non-Individual Customer",
+      "options": "Non-Individual Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer_name",
+      "fieldtype": "Data",
+      "label": "Customer Name",
+      "fetch_from": "customer.entity_name",
+      "read_only": 1
+    },
+    {
+      "fieldname": "screened_on",
+      "fieldtype": "Datetime",
+      "label": "Screened On",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "api_query",
+      "fieldtype": "Data",
+      "label": "API Query String"
+    },
+    {
+      "fieldname": "match_found",
+      "fieldtype": "Check",
+      "label": "Match Found",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "total_results",
+      "fieldtype": "Int",
+      "label": "Total API Results"
+    },
+    {
+      "fieldname": "section_matches",
+      "fieldtype": "Section Break",
+      "label": "Matched Entities"
+    },
+    {
+      "fieldname": "matches_table",
+      "fieldtype": "Table",
+      "label": "Matches",
+      "options": "Sanctions Match Entry"
+    },
+    {
+      "fieldname": "section_raw",
+      "fieldtype": "Section Break",
+      "label": "Raw API Response"
+    },
+    {
+      "fieldname": "raw_api_response",
+      "fieldtype": "Code",
+      "label": "Raw JSON Response",
+      "options": "JSON"
+    },
+    {
+      "fieldname": "section_risk",
+      "fieldtype": "Section Break",
+      "label": "Risk Assessment"
+    },
+    {
+      "fieldname": "risk_assessment",
+      "fieldtype": "Select",
+      "label": "Risk Assessment Outcome",
+      "options": "Clear\nMatch Found\nReview Required\nFalse Positive"
+    },
+    {
+      "fieldname": "assessed_by",
+      "fieldtype": "Link",
+      "label": "Assessed By",
+      "options": "User"
+    },
+    {
+      "fieldname": "assessment_notes",
+      "fieldtype": "Text",
+      "label": "Assessment Notes"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "All",
+      "read": 1
+    }
+  ],
+  "is_submittable": 0
+}

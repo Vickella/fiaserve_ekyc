@@ -3,12 +3,13 @@ name = "fiaserve_ekyc"
 authors = [
     { name = "VerityCore Consultancy (Pvt) Ltd", email = "devs@veritycore.co.zw"}
 ]
-description = "KYC and Sansctins screening app"
+description = "FIASERV eKYC - Electronic KYC compliance platform"
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
     # "frappe~=15.0.0" # Installed and managed by bench.
+    "requests",
 ]
 
 [build-system]
