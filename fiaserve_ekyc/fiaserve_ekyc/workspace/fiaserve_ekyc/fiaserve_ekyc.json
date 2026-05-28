@@ -1,0 +1,142 @@
+{
+  "charts": [],
+  "content": "[{\"id\":\"fiaserve_header_shortcuts\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcuts</b></span>\",\"col\":12}},{\"id\":\"fiaserve_shortcut_individual\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Individual Customer\",\"col\":3}},{\"id\":\"fiaserve_shortcut_non_individual\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Non-Individual Customer\",\"col\":3}},{\"id\":\"fiaserve_shortcut_pep\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"High Risk PEP Individual\",\"col\":3}},{\"id\":\"fiaserve_shortcut_high_risk_org\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"High Risk Non-Individual\",\"col\":3}},{\"id\":\"fiaserve_spacer_one\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"fiaserve_header_cards\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>KYC Operations</b></span>\",\"col\":12}},{\"id\":\"fiaserve_card_customer_onboarding\",\"type\":\"card\",\"data\":{\"card_name\":\"Customer Onboarding\",\"col\":4}},{\"id\":\"fiaserve_card_high_risk_screening\",\"type\":\"card\",\"data\":{\"card_name\":\"High Risk Screening\",\"col\":4}},{\"id\":\"fiaserve_card_portal_review\",\"type\":\"card\",\"data\":{\"card_name\":\"Portal and Review\",\"col\":4}}]",
+  "creation": "2026-05-28 10:30:00.000000",
+  "custom_blocks": [],
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "review",
+  "idx": 0,
+  "is_hidden": 0,
+  "label": "FIASERVE eKYC",
+  "links": [
+    {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Customer Onboarding",
+      "link_count": 0,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "dependencies": "",
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Individual Customers",
+      "link_count": 0,
+      "link_to": "Individual Customer",
+      "link_type": "DocType",
+      "onboard": 1,
+      "type": "Link"
+    },
+    {
+      "dependencies": "",
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Non-Individual Customers",
+      "link_count": 0,
+      "link_to": "Non-Individual Customer",
+      "link_type": "DocType",
+      "onboard": 1,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "High Risk Screening",
+      "link_count": 0,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "dependencies": "",
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "High Risk / PEP Individuals",
+      "link_count": 0,
+      "link_to": "High Risk PEP Individual",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "dependencies": "",
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "High Risk Non-Individuals",
+      "link_count": 0,
+      "link_to": "High Risk Non-Individual",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Portal and Review",
+      "link_count": 0,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "dependencies": "",
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "KYC Portal",
+      "link_count": 0,
+      "link_to": "kyc_portal",
+      "link_type": "Page",
+      "onboard": 0,
+      "type": "Link"
+    }
+  ],
+  "modified": "2026-05-28 10:30:00.000000",
+  "modified_by": "Administrator",
+  "module": "FIASERVE EKYC",
+  "name": "FIASERVE eKYC",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "",
+  "public": 1,
+  "quick_lists": [],
+  "restrict_to_domain": "",
+  "roles": [],
+  "sequence_id": 1.0,
+  "shortcuts": [
+    {
+      "color": "Blue",
+      "doc_view": "List",
+      "label": "Individual Customer",
+      "link_to": "Individual Customer",
+      "stats_filter": "[]",
+      "type": "DocType"
+    },
+    {
+      "color": "Green",
+      "doc_view": "List",
+      "label": "Non-Individual Customer",
+      "link_to": "Non-Individual Customer",
+      "stats_filter": "[]",
+      "type": "DocType"
+    },
+    {
+      "color": "Orange",
+      "doc_view": "List",
+      "label": "High Risk PEP Individual",
+      "link_to": "High Risk PEP Individual",
+      "stats_filter": "[]",
+      "type": "DocType"
+    },
+    {
+      "color": "Red",
+      "doc_view": "List",
+      "label": "High Risk Non-Individual",
+      "link_to": "High Risk Non-Individual",
+      "stats_filter": "[]",
+      "type": "DocType"
+    }
+  ],
+  "title": "FIASERVE eKYC"
+}
