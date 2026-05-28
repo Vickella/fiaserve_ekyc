@@ -40,6 +40,30 @@ function showAlert(message, type = "info") {
   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
+function getCsrfToken() {
+  if (window.frappe && window.frappe.csrf_token && window.frappe.csrf_token !== "None") {
+    return window.frappe.csrf_token;
+  }
+  const cookieToken = document.cookie.split("; ").find(r => r.startsWith("X-Frappe-CSRF-Token="));
+  return cookieToken ? cookieToken.split("=")[1] : "";
+}
+
+async function callFiaservMethod(method, args) {
+  const resp = await fetch(`/api/method/${method}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Frappe-CSRF-Token": getCsrfToken(),
+    },
+    body: JSON.stringify(args || {}),
+  });
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok || data.exc) {
+    throw new Error(data._server_messages || data.exception || data.exc || resp.statusText || "Request failed");
+  }
+  return data.message;
+}
+
 async function uploadFile(file, doctype, docname, fieldname) {
   if (!file || !file.name) return null;
   const formData = new FormData();
@@ -49,8 +73,7 @@ async function uploadFile(file, doctype, docname, fieldname) {
   formData.append("docname", docname);
   formData.append("fieldname", fieldname);
   formData.append("folder", "Home/Attachments");
-  const csrfToken = frappe.csrf_token || document.cookie.split("; ").find(r => r.startsWith("X-Frappe-CSRF-Token="))?.split("=")[1] || "";
-  const resp = await fetch("/api/method/upload_file", { method: "POST", headers: { "X-Frappe-CSRF-Token": csrfToken }, body: formData });
+  const resp = await fetch("/api/method/upload_file", { method: "POST", headers: { "X-Frappe-CSRF-Token": getCsrfToken() }, body: formData });
   if (!resp.ok) return null;
   const data = await resp.json();
   return data.message?.file_url || null;
@@ -82,12 +105,12 @@ async function submitKYCForm(doctype) {
   });
   const principalRows = collectPrincipals();
   if (principalRows.length) doc.principals_table = principalRows;
-  let docname;
+  let result;
   try {
-    const result = await new Promise((resolve, reject) => {
-      frappe.call({ method: "frappe.client.insert", args: { doc }, callback: r => r.exc ? reject(r.exc) : resolve(r.message) });
+    result = await callFiaservMethod("fiaserve_ekyc.fiaserve_ekyc.utils.kyc_submission.submit_kyc", {
+      doctype,
+      doc: JSON.stringify(doc),
     });
-    docname = result.name;
   } catch (err) {
     showAlert(`Failed to save record: ${err}`, "error");
     saveBtn.disabled = false;
@@ -98,17 +121,19 @@ async function submitKYCForm(doctype) {
     showAlert("Uploading documents...", "info");
     const uploadUpdates = {};
     for (const { fieldname, file } of fileFields) {
-      const url = await uploadFile(file, doctype, docname, fieldname);
+      const url = await uploadFile(file, doctype, result.name, fieldname);
       if (url) uploadUpdates[fieldname] = url;
     }
     if (Object.keys(uploadUpdates).length) {
-      await new Promise(resolve => {
-        frappe.call({ method: "frappe.client.set_value", args: { doctype, name: docname, fieldname: uploadUpdates }, callback: resolve });
+      await callFiaservMethod("fiaserve_ekyc.fiaserve_ekyc.utils.kyc_submission.update_kyc_attachments", {
+        doctype,
+        docname: result.name,
+        values: JSON.stringify(uploadUpdates),
       });
     }
   }
   const route = doctype.toLowerCase().replace(/\s+/g, "-");
-  showAlert(`KYC record <strong>${docname}</strong> saved successfully. Sanctions screening has been initiated. <a href="/app/${route}/${docname}" style="color:#1a2e6e;font-weight:700;">View Record</a>`, "success");
+  showAlert(`KYC record <strong>${result.name}</strong> saved successfully. Sanctions status: <strong>${result.sanctions_status || "Pending"}</strong>. Screening records: <strong>${result.screening_count || 0}</strong>. <a href="/app/${route}/${result.name}" style="color:#1a2e6e;font-weight:700;">View Record</a>`, "success");
   saveBtn.disabled = false;
   if (indicator) indicator.style.display = "none";
 }
@@ -139,3 +164,11 @@ function addPrincipalRow() {
   `;
   tbody.appendChild(tr);
 }
+
+window.populateCountries = populateCountries;
+window.toggleSection = toggleSection;
+window.showAlert = showAlert;
+window.uploadFile = uploadFile;
+window.submitKYCForm = submitKYCForm;
+window.collectPrincipals = collectPrincipals;
+window.addPrincipalRow = addPrincipalRow;
