@@ -3,7 +3,7 @@ from frappe import _
 
 def get_data():
     return [{
-        "module_name": "FIASERV eKYC",
+        "module_name": "FIASERVE EKYC",
         "color": "#1a2e6e",
         "icon": "fa fa-id-card",
         "type": "module",
