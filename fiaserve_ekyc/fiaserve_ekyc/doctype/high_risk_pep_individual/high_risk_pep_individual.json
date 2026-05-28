@@ -1,6 +1,6 @@
 {
   "name": "High Risk PEP Individual",
-  "module": "FIASERVE EKYC",
+  "module": "FIASERV eKYC",
   "doctype": "DocType",
   "autoname": "format:PEP-{YYYY}-{#####}",
   "title_field": "full_name",
