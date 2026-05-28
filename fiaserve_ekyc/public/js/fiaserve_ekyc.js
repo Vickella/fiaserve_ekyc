@@ -2,14 +2,26 @@ const COUNTRIES = ["Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "An
 
 function populateCountries(fieldIds) {
   fieldIds.forEach(id => {
-    const sel = document.getElementById(id);
+    let sel = document.getElementById(id);
     if (!sel) return;
+    if (sel.tagName !== "SELECT") {
+      const replacement = document.createElement("select");
+      replacement.id = sel.id;
+      replacement.name = sel.name;
+      replacement.required = sel.required;
+      replacement.className = sel.className;
+      replacement.dataset.previousValue = sel.value || "";
+      sel.replaceWith(replacement);
+      sel = replacement;
+    }
+    sel.innerHTML = '<option value="">-- Select --</option>';
     COUNTRIES.forEach(c => {
       const opt = document.createElement("option");
       opt.value = c;
       opt.textContent = c;
       sel.appendChild(opt);
     });
+    if (sel.dataset.previousValue) sel.value = sel.dataset.previousValue;
   });
 }
 

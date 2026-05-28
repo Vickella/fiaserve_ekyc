@@ -2,24 +2,37 @@
 {% block title %}KYC Portal - FIASERV eKYC{% endblock %}
 {% block head_include %}
 <link rel="stylesheet" href="/assets/fiaserve_ekyc/css/fiaserve_ekyc.css">
+<style>
+  body{background:#f3f6fa}.web-footer,.navbar,.page-breadcrumbs{display:none!important}.fias-header{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;background:#173c62;box-shadow:0 2px 14px rgba(8,47,79,.2)}.fias-brand{display:inline-flex;align-items:center;gap:16px;color:#fff;text-decoration:none;font-size:22px;font-weight:800}.fias-brand img{height:42px;background:#fff}.fias-brand span{color:#6ec6ff}.fias-header-action{color:#fff;border:1px solid rgba(255,255,255,.34);background:rgba(255,255,255,.12);border-radius:6px;padding:9px 18px;text-decoration:none;font-weight:650}.fias-shell{max-width:1040px;margin:0 auto;padding:44px 20px 72px}.fias-hero{text-align:center;margin-bottom:30px}.fias-hero h1{margin:0;color:#082f4f;font-size:42px;line-height:1.12;font-weight:850}.fias-hero p{margin:12px auto 0;max-width:720px;color:#52667d;font-size:18px}.fias-progress{height:7px;border-radius:999px;background:#dde6f1;margin:34px auto 30px;overflow:hidden}.fias-progress span{display:block;width:25%;height:100%;background:#173c62}.category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.category-card{min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:30px;background:#fff;border:1px solid #d8e0ea;border-radius:10px;color:#08233c;text-align:center;text-decoration:none}.category-card:hover{border-color:#173c62;box-shadow:0 16px 40px rgba(8,47,79,.1);transform:translateY(-2px);text-decoration:none}.card-icon{display:grid;place-items:center;width:54px;height:54px;border-radius:10px;border:2px solid #173c62;color:#173c62;font-size:28px}.category-card h3{margin:0;font-size:22px;color:#08233c;font-weight:800}.category-card p{margin:0;color:#52667d;font-size:15px}@media(max-width:760px){.fias-header{height:auto;align-items:flex-start;flex-direction:column;padding:16px 20px}.category-grid{grid-template-columns:1fr}}
+</style>
 {% endblock %}
 {% block page_content %}
-{% set header_title = "FIASERV eKYC Platform" %}
 <header class="fias-header">
-  <div class="logo-wrap"><a href="/kyc_portal"><img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIAServ Logo"></a></div>
-  <div class="header-title">{{ header_title }}</div>
-  <div class="header-meta">VerityCore Consultancy<br>devs@veritycore.co.zw</div>
+  <a class="fias-brand" href="/kyc_portal">
+    <img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIAServ Logo">
+    <strong>FIASERV <span>Compliance</span></strong>
+  </a>
+  <a class="fias-header-action" href="/app/fiaserv-ekyc">Go to Backoffice -></a>
 </header>
-<div class="fias-page">
-  <h1 style="color:var(--fias-navy);margin-bottom:4px;">Customer KYC Capture</h1>
-  <p style="color:#6b7280;">Select the customer category to begin the eKYC process.</p>
-  <div class="category-grid">
-    <a href="/individual_kyc" class="category-card"><span class="card-icon">&#128100;</span><h3>Individual</h3><p>Standard KYC capture for individual persons.</p></a>
-    <a href="/high_risk_pep_kyc" class="category-card high-risk"><span class="card-icon">&#9888;</span><h3>Individual - High Risk / PEP</h3><p>High risk individuals, PEPs, and sanctioned persons.</p></a>
-    <a href="/non_individual_kyc" class="category-card"><span class="card-icon">&#127970;</span><h3>Non-Individual</h3><p>Companies, trusts, partnerships and other legal persons.</p></a>
-    <a href="/high_risk_non_individual_kyc" class="category-card high-risk"><span class="card-icon">&#128737;</span><h3>Non-Individual - High Risk / PEP</h3><p>High risk entities and PEP-associated legal persons.</p></a>
-  </div>
-  <div class="fias-footer">FIASERV eKYC &copy; {{ frappe.utils.now()[:4] }} - Developed by VerityCore Consultancy</div>
-</div>
 
+<main class="fias-shell">
+  <section class="fias-hero">
+    <h1>KYC Application</h1>
+    <p>Please select the type of client to begin the Know-Your-Customer process.</p>
+    <div class="fias-progress"><span></span></div>
+  </section>
+
+  <section class="category-grid" aria-label="KYC customer type">
+    <a href="/individual_kyc" class="category-card">
+      <span class="card-icon" aria-hidden="true">&#128100;</span>
+      <h3>Individual</h3>
+      <p>Natural persons, citizens, residents and foreign clients.</p>
+    </a>
+    <a href="/non_individual_kyc" class="category-card">
+      <span class="card-icon" aria-hidden="true">&#127970;</span>
+      <h3>Non-Individual / Entity</h3>
+      <p>Companies, trusts, partnerships, associations and NGOs.</p>
+    </a>
+  </section>
+</main>
 {% endblock %}

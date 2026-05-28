@@ -2,19 +2,20 @@
 {% block title %}High Risk / PEP KYC - FIASERV eKYC{% endblock %}
 {% block head_include %}
 <link rel="stylesheet" href="/assets/fiaserve_ekyc/css/fiaserve_ekyc.css">
+<style>
+  body{background:#f3f6fa}.web-footer,.navbar,.page-breadcrumbs{display:none!important}.fias-header{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;background:#173c62;box-shadow:0 2px 14px rgba(8,47,79,.2)}.fias-brand{display:inline-flex;align-items:center;gap:16px;color:#fff;text-decoration:none;font-size:22px;font-weight:800}.fias-brand img{height:42px;background:#fff}.fias-brand span{color:#6ec6ff}.fias-header-action{color:#fff;border:1px solid rgba(255,255,255,.34);background:rgba(255,255,255,.12);border-radius:6px;padding:9px 18px;text-decoration:none;font-weight:650}.fias-page{max-width:1040px;margin:0 auto;padding:44px 20px 72px}.fias-form-card{background:#fff;border:1px solid #d8e0ea;border-radius:10px;padding:34px;box-shadow:0 16px 40px rgba(8,47,79,.1)}.fias-form-card h2,.fias-section-title{color:#082f4f;border-bottom:2px solid #173c62}.fias-form-card h2{padding-bottom:12px}.fias-section-title{margin:30px 0 14px;padding-bottom:10px;font-size:19px;font-weight:800}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px}.form-group{display:flex;flex-direction:column;gap:6px}.form-group.full-width{grid-column:1/-1}.form-group label{font-weight:700;color:#08233c}.form-group input,.form-group select,.form-group textarea{width:100%;min-height:44px;border:1px solid #cfd9e6;border-radius:7px;padding:9px 12px;font-size:16px}.form-group textarea{min-height:90px}.fias-btn-primary{border:1px solid #173c62;background:#173c62;color:#fff;border-radius:7px;padding:11px 20px;font-weight:750}.fias-btn-secondary{display:inline-flex;border:1px solid #173c62;background:#fff;color:#173c62;border-radius:7px;padding:11px 20px;margin-bottom:18px;font-weight:750;text-decoration:none}.fias-help{color:#52667d;font-size:14px}@media(max-width:760px){.fias-header{height:auto;align-items:flex-start;flex-direction:column;padding:16px 20px}.form-grid{grid-template-columns:1fr}.fias-form-card{padding:22px}}
+</style>
 {% endblock %}
 {% block page_content %}
-{% set header_title = "High Risk / PEP KYC - FIASERV eKYC" %}
 <header class="fias-header">
-  <div class="logo-wrap"><a href="/kyc_portal"><img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIAServ Logo"></a></div>
-  <div class="header-title">{{ header_title }}</div>
-  <div class="header-meta">VerityCore Consultancy<br>devs@veritycore.co.zw</div>
+  <a class="fias-brand" href="/kyc_portal"><img src="/assets/fiaserve_ekyc/images/fiaserv_logo.png" alt="FIAServ Logo"><strong>FIASERV <span>Compliance</span></strong></a>
+  <a class="fias-header-action" href="/app/fiaserv-ekyc">Go to Backoffice -></a>
 </header>
 <div class="fias-page">
   <a href="/kyc_portal" class="fias-btn-secondary">Back to Portal</a>
   <div class="fias-form-card">
     <h2>High Risk / PEP Individual - KYC Form</h2>
-    <p style="color:#6b7280;font-size:0.85rem;margin-top:4px;">Fields marked <span style="color:red;">*</span> are mandatory.</p>
+    <p class="fias-help">Fields marked <span class="required">*</span> are mandatory.</p>
     <div id="fias-alert" class="fias-alert"></div>
     <form id="kyc-form" onsubmit="return false;">
       <div class="fias-section-title">Personal Information</div><div class="form-grid">
@@ -67,7 +68,6 @@
       </div>
     </form>
   </div>
-  <div class="fias-footer">FIASERV eKYC &copy; {{ frappe.utils.now()[:4] }} - Developed by VerityCore Consultancy</div>
 </div>
 <script src="/assets/fiaserve_ekyc/js/fiaserve_ekyc.js"></script>
 <script>populateCountries(["country_of_birth", "country_of_residence", "pep_jurisdiction"]);</script>
