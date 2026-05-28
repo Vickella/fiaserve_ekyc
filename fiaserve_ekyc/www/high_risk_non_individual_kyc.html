@@ -24,8 +24,8 @@
 <div class="form-group"><label>Registration / Incorporation Number <span class="required">*</span></label><input type="text" name="registration_number" id="registration_number" required></div>
 <div class="form-group"><label>Date of Incorporation</label><input type="date" name="date_of_incorporation" id="date_of_incorporation"></div>
 <div class="form-group"><label>Place of Incorporation</label><input type="text" name="place_of_incorporation" id="place_of_incorporation"></div>
-<div class="form-group"><label>Country of Incorporation <span class="required">*</span></label><input type="text" name="country_of_incorporation" id="country_of_incorporation" required></div>
-<div class="form-group"><label>Place / Country of Business Operations</label><input type="text" name="country_of_operations" id="country_of_operations"></div>
+<div class="form-group"><label>Country of Incorporation <span class="required">*</span></label><select name="country_of_incorporation" id="country_of_incorporation" required><option value="">-- Select --</option>{% for country in countries %}<option value="{{ country }}">{{ country }}</option>{% endfor %}</select></div>
+<div class="form-group"><label>Place / Country of Business Operations</label><select name="country_of_operations" id="country_of_operations"><option value="">-- Select --</option>{% for country in countries %}<option value="{{ country }}">{{ country }}</option>{% endfor %}</select></div>
 <div class="form-group"><label>Risk Level</label><select name="risk_level" id="risk_level"><option value="">-- Select --</option><option>High</option><option>Very High</option></select></div>
 <div class="form-group full-width"><label>Head Office Address <span class="required">*</span></label><textarea name="head_office_address" id="head_office_address" required></textarea></div>
 </div><div class="fias-section-title">Directors / Shareholders / Trustees / Beneficiaries</div>

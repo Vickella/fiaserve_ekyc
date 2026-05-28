@@ -24,11 +24,11 @@
 <div class="form-group"><label>ID Document Type <span class="required">*</span></label><select name="id_document_type" id="id_document_type" required><option value="">-- Select --</option><option>National ID</option><option>Passport</option><option>Driver's Licence</option><option>Residence Permit</option><option>Work Permit</option><option>Refugee Document</option><option>Other</option></select></div>
 <div class="form-group"><label>ID / Passport Number <span class="required">*</span></label><input type="text" name="national_id_number" id="national_id_number" required></div>
 <div class="form-group"><label>Place of Birth</label><input type="text" name="place_of_birth" id="place_of_birth"></div>
-<div class="form-group"><label>Country of Birth</label><input type="text" name="country_of_birth" id="country_of_birth"></div>
-<div class="form-group"><label>Country of Residence <span class="required">*</span></label><input type="text" name="country_of_residence" id="country_of_residence" required></div>
+<div class="form-group"><label>Country of Birth</label><select name="country_of_birth" id="country_of_birth"><option value="">-- Select --</option>{% for country in countries %}<option value="{{ country }}">{{ country }}</option>{% endfor %}</select></div>
+<div class="form-group"><label>Country of Residence <span class="required">*</span></label><select name="country_of_residence" id="country_of_residence" required><option value="">-- Select --</option>{% for country in countries %}<option value="{{ country }}">{{ country }}</option>{% endfor %}</select></div>
 <div class="form-group"><label>Risk Level</label><select name="risk_level" id="risk_level"><option value="">-- Select --</option><option>High</option><option>Very High</option></select></div>
 <div class="form-group"><label>PEP Designation / Political Position</label><input type="text" name="pep_designation" id="pep_designation"></div>
-<div class="form-group"><label>PEP Jurisdiction (Country)</label><input type="text" name="pep_jurisdiction" id="pep_jurisdiction"></div>
+<div class="form-group"><label>PEP Jurisdiction (Country)</label><select name="pep_jurisdiction" id="pep_jurisdiction"><option value="">-- Select --</option>{% for country in countries %}<option value="{{ country }}">{{ country }}</option>{% endfor %}</select></div>
 <div class="form-group full-width"><label>Residential Address <span class="required">*</span></label><textarea name="residential_address" id="residential_address" required></textarea></div>
 </div>
 <div class="fias-section-title">Customer Representative (Where Applicable)</div><div class="form-grid"><div class="form-group full-width"><label><input type="checkbox" name="has_representative" id="has_representative" onchange="toggleSection(\'rep-section\', this.checked)"> This customer has an authorised representative</label></div></div><div id="rep-section" style="display:none;"><div class="form-grid">
@@ -45,6 +45,10 @@
 <div class="fias-section-title">Adverse Media Screening</div><div class="form-grid">
 <div class="form-group full-width"><label>Adverse / Negative Media Screening Notes</label><textarea name="adverse_media_notes" id="adverse_media_notes"></textarea></div>
 <div class="form-group"><label>Adverse Media Screening Screenshot</label><input type="file" name="adverse_media_doc" id="adverse_media_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
+</div>
+<div class="fias-section-title">Financial Clearing Bureau Screening</div><div class="form-grid">
+<div class="form-group full-width"><label>Financial Clearing Bureau Screening Notes</label><textarea name="financial_clearing_bureau_notes" id="financial_clearing_bureau_notes"></textarea></div>
+<div class="form-group"><label>Financial Clearing Bureau Screenshot / Printout</label><input type="file" name="financial_clearing_bureau_doc" id="financial_clearing_bureau_doc" accept=".pdf,.jpg,.jpeg,.png"></div>
 </div>
 <div class="fias-section-title">Senior Management Sign-Off</div><div class="form-grid">
 <div class="form-group full-width"><label><input type="checkbox" name="senior_mgmt_approval" required> Senior Management Approval Obtained <span class="required">*</span></label></div>

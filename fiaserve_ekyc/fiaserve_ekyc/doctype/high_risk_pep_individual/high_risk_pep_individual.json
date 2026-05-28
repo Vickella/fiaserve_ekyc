@@ -169,6 +169,21 @@
       "label": "Adverse Media Screening Screenshot"
     },
     {
+      "fieldname": "section_financial_clearing",
+      "fieldtype": "Section Break",
+      "label": "Financial Clearing Bureau Screening"
+    },
+    {
+      "fieldname": "financial_clearing_bureau_notes",
+      "fieldtype": "Text",
+      "label": "Financial Clearing Bureau Screening Notes"
+    },
+    {
+      "fieldname": "financial_clearing_bureau_doc",
+      "fieldtype": "Attach",
+      "label": "Financial Clearing Bureau Screening Screenshot / Printout"
+    },
+    {
       "fieldname": "section_approval",
       "fieldtype": "Section Break",
       "label": "Senior Management Sign-Off"
