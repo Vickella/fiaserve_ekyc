@@ -1,6 +1,6 @@
 {
   "name": "Non-Individual Customer",
-  "module": "FIASERV eKYC",
+  "module": "FIASERVE EKYC",
   "doctype": "DocType",
   "autoname": "format:ORG-{YYYY}-{#####}",
   "title_field": "full_name",
