@@ -10,7 +10,7 @@ from datetime import datetime
 import frappe
 import requests
 
-OPENSANCTIONS_BASE_URL = "https://api.opensanctions.org"
+OPENSANCTIONS_MATCH_URL = "https://api.opensanctions.org/match/default"
 
 
 def _get_headers():
@@ -22,9 +22,17 @@ def _get_headers():
 
 
 def _search_entity(name: str, schema: str = "Thing") -> dict:
-	params = {"q": name, "schema": schema, "limit": 10, "fuzzy": "true"}
+	payload = {
+		"queries": {
+			"customer": {
+				"schema": schema,
+				"properties": {"name": [name]},
+			}
+		}
+	}
+	params = {"limit": 10, "threshold": 0.7}
 	try:
-		resp = requests.get(f"{OPENSANCTIONS_BASE_URL}/search/default", params=params, headers=_get_headers(), timeout=15)
+		resp = requests.post(OPENSANCTIONS_MATCH_URL, params=params, json=payload, headers=_get_headers(), timeout=15)
 		resp.raise_for_status()
 		return resp.json()
 	except Exception as exc:
@@ -34,7 +42,8 @@ def _search_entity(name: str, schema: str = "Thing") -> dict:
 
 def _extract_matches(api_response: dict) -> list:
 	matches = []
-	for result in api_response.get("results", []):
+	results = api_response.get("responses", {}).get("customer", {}).get("results", api_response.get("results", []))
+	for result in results:
 		props = result.get("properties", {})
 		topics = result.get("topics", [])
 		matches.append({
@@ -69,7 +78,7 @@ def _save_screening(screening_doctype: str, link_field: str, customer_name_value
 		"screened_on": datetime.now(),
 		"api_query": query,
 		"match_found": 1 if matches else 0,
-		"total_results": api_response.get("total", {}).get("value", len(matches)),
+		"total_results": len(matches),
 		"raw_api_response": json.dumps(api_response, indent=2),
 		"matches_table": [dict({"doctype": "Sanctions Match Entry"}, **match) for match in matches],
 		"risk_assessment": status,
