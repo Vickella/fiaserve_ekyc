@@ -8,8 +8,10 @@ app_email = "devs@veritycore.co.zw"
 app_license = "MIT"
 app_version = "1.0.0"
 
-app_include_css = ["/assets/fiaserve_ekyc/css/fiaserve_ekyc.css"]
-app_include_js = ["/assets/fiaserve_ekyc/js/fiaserve_ekyc.js"]
+# The portal CSS/JS is loaded directly by the public KYC pages. Do not inject it
+# into Desk, because it targets standard form classes used by ERPNext screens.
+app_include_css = []
+app_include_js = []
 
 add_to_apps_screen = [
 	{

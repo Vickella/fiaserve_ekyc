@@ -34,6 +34,7 @@ function toggleSection(sectionId, show) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const representativeCheckbox = document.getElementById("has_representative");
+  hydratePortalLogos();
   if (!representativeCheckbox) return;
 
   toggleSection("rep-section", representativeCheckbox.checked);
@@ -41,6 +42,22 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleSection("rep-section", representativeCheckbox.checked);
   });
 });
+
+function hydratePortalLogos() {
+  document.querySelectorAll(".fias-brand img").forEach(img => {
+    const markMissing = () => {
+      img.style.display = "none";
+      if (!img.parentElement.querySelector(".fias-logo-fallback")) {
+        const fallback = document.createElement("span");
+        fallback.className = "fias-logo-fallback";
+        fallback.textContent = "FIAServ";
+        img.insertAdjacentElement("afterend", fallback);
+      }
+    };
+    img.addEventListener("error", markMissing);
+    if (img.complete && img.naturalWidth === 0) markMissing();
+  });
+}
 
 function showAlert(message, type = "info") {
   const el = document.getElementById("fias-alert");
