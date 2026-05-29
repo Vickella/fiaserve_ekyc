@@ -18,6 +18,12 @@
       "in_list_view": 1
     },
     {
+      "fieldname": "aliases_json",
+      "fieldtype": "Code",
+      "label": "API Names / Aliases (JSON)",
+      "options": "JSON"
+    },
+    {
       "fieldname": "match_score",
       "fieldtype": "Float",
       "label": "Match Score",

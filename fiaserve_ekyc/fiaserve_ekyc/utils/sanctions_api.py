@@ -12,6 +12,7 @@ import requests
 
 OPENSANCTIONS_MATCH_URL = "https://api.opensanctions.org/match/default"
 OPENSANCTIONS_SEARCH_URL = "https://api.opensanctions.org/search/default"
+DATA_FIELD_MAX_LENGTH = 140
 
 
 def _get_headers():
@@ -87,19 +88,52 @@ def _extract_matches(api_response: dict) -> list:
 	for result in results:
 		props = result.get("properties", {})
 		topics = result.get("topics", [])
+		names = _as_list(props.get("name")) or [result.get("caption", "")]
 		matches.append({
-			"entity_id": result.get("id", ""),
-			"entity_name": ", ".join(props.get("name", [result.get("caption", "")])),
+			"entity_id": _as_data(result.get("id", "")),
+			"entity_name": _as_data(_pick_display_name(result, names)),
 			"match_score": result.get("score", 0.0),
-			"datasets": ", ".join(result.get("datasets", [])),
+			"datasets": _as_data(", ".join(_as_list(result.get("datasets")))),
 			"is_pep": 1 if "role.pep" in topics else 0,
 			"is_sanctioned": 1 if any(topic in topics for topic in ["sanction", "sanction.linked", "debarment"]) else 0,
-			"countries": ", ".join(props.get("country", props.get("jurisdiction", []))),
-			"birth_date": ", ".join(props.get("birthDate", [])),
-			"entity_url": f"https://www.opensanctions.org/entities/{result.get('id', '')}",
+			"countries": _as_data(", ".join(_as_list(props.get("country", props.get("jurisdiction", []))))),
+			"birth_date": _as_data(", ".join(_as_list(props.get("birthDate")))),
+			"entity_url": _as_data(f"https://www.opensanctions.org/entities/{result.get('id', '')}"),
+			"aliases_json": json.dumps(names, ensure_ascii=False, indent=2),
 			"properties_json": json.dumps(props, indent=2),
 		})
 	return matches
+
+
+def _as_list(value):
+	if value is None:
+		return []
+	if isinstance(value, list):
+		return [str(item) for item in value if item is not None]
+	return [str(value)]
+
+
+def _as_data(value, max_length: int = DATA_FIELD_MAX_LENGTH):
+	value = " ".join(str(value or "").split())
+	if len(value) <= max_length:
+		return value
+	return value[: max_length - 1].rstrip() + "…"
+
+
+def _pick_display_name(result: dict, names: list[str]) -> str:
+	caption = result.get("caption")
+	if caption:
+		return caption
+
+	for name in names:
+		if name and name.isascii():
+			return name
+
+	for name in names:
+		if name:
+			return name
+
+	return result.get("id", "")
 
 
 def _determine_status(matches: list) -> str:
