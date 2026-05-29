@@ -32,6 +32,16 @@ function toggleSection(sectionId, show) {
   if (repDoc) repDoc.style.display = show ? "block" : "none";
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const representativeCheckbox = document.getElementById("has_representative");
+  if (!representativeCheckbox) return;
+
+  toggleSection("rep-section", representativeCheckbox.checked);
+  representativeCheckbox.addEventListener("change", () => {
+    toggleSection("rep-section", representativeCheckbox.checked);
+  });
+});
+
 function showAlert(message, type = "info") {
   const el = document.getElementById("fias-alert");
   if (!el) return;

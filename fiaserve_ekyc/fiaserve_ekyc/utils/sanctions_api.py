@@ -11,17 +11,34 @@ import frappe
 import requests
 
 OPENSANCTIONS_MATCH_URL = "https://api.opensanctions.org/match/default"
+OPENSANCTIONS_SEARCH_URL = "https://api.opensanctions.org/search/default"
 
 
 def _get_headers():
 	api_key = frappe.conf.get("opensanctions_api_key", "")
-	headers = {"Accept": "application/json"}
+	headers = {"Accept": "application/json", "Content-Type": "application/json"}
 	if api_key:
 		headers["Authorization"] = f"ApiKey {api_key}"
 	return headers
 
 
 def _search_entity(name: str, schema: str = "Thing") -> dict:
+	match_response = _match_entity(name, schema=schema)
+	if _get_result_rows(match_response):
+		return match_response
+
+	search_response = _search_default(name, schema=schema)
+	if _get_result_rows(search_response):
+		return {
+			"responses": {"customer": search_response},
+			"source": "search/default fallback",
+			"match_response": match_response,
+		}
+
+	return match_response if match_response else search_response
+
+
+def _match_entity(name: str, schema: str = "Thing") -> dict:
 	payload = {
 		"queries": {
 			"customer": {
@@ -30,19 +47,43 @@ def _search_entity(name: str, schema: str = "Thing") -> dict:
 			}
 		}
 	}
-	params = {"limit": 10, "threshold": 0.7}
+	params = {"limit": 10, "threshold": 0.3}
 	try:
 		resp = requests.post(OPENSANCTIONS_MATCH_URL, params=params, json=payload, headers=_get_headers(), timeout=15)
 		resp.raise_for_status()
 		return resp.json()
-	except Exception as exc:
-		frappe.log_error(message=str(exc), title="OpenSanctions API Error")
-		return {}
+	except requests.RequestException as exc:
+		return _api_error_response(exc, "OpenSanctions Match API Error")
+
+
+def _search_default(name: str, schema: str = "Thing") -> dict:
+	params = {"q": name, "schema": schema, "limit": 10, "fuzzy": "true"}
+	try:
+		resp = requests.get(OPENSANCTIONS_SEARCH_URL, params=params, headers=_get_headers(), timeout=15)
+		resp.raise_for_status()
+		return resp.json()
+	except requests.RequestException as exc:
+		return _api_error_response(exc, "OpenSanctions Search API Error")
+
+
+def _api_error_response(exc: requests.RequestException, title: str) -> dict:
+	resp = getattr(exc, "response", None)
+	error_response = {
+		"error": str(exc),
+		"status_code": getattr(resp, "status_code", None),
+		"response_text": (getattr(resp, "text", "") or "")[:4000],
+	}
+	frappe.log_error(message=json.dumps(error_response, indent=2), title=title)
+	return error_response
+
+
+def _get_result_rows(api_response: dict) -> list:
+	return api_response.get("responses", {}).get("customer", {}).get("results", api_response.get("results", []))
 
 
 def _extract_matches(api_response: dict) -> list:
 	matches = []
-	results = api_response.get("responses", {}).get("customer", {}).get("results", api_response.get("results", []))
+	results = _get_result_rows(api_response)
 	for result in results:
 		props = result.get("properties", {})
 		topics = result.get("topics", [])
@@ -71,14 +112,14 @@ def _determine_status(matches: list) -> str:
 
 
 def _save_screening(screening_doctype: str, link_field: str, customer_name_value: str, api_response: dict, matches: list, query: str):
-	status = _determine_status(matches)
+	status = "Review Required" if api_response.get("error") else _determine_status(matches)
 	doc = frappe.get_doc({
 		"doctype": screening_doctype,
 		link_field: customer_name_value,
 		"screened_on": datetime.now(),
 		"api_query": query,
 		"match_found": 1 if matches else 0,
-		"total_results": len(matches),
+		"total_results": _get_total_results(api_response, matches),
 		"raw_api_response": json.dumps(api_response, indent=2),
 		"matches_table": [dict({"doctype": "Sanctions Match Entry"}, **match) for match in matches],
 		"risk_assessment": status,
@@ -86,6 +127,14 @@ def _save_screening(screening_doctype: str, link_field: str, customer_name_value
 	doc.insert(ignore_permissions=True)
 	frappe.db.commit()
 	return status
+
+
+def _get_total_results(api_response: dict, matches: list) -> int:
+	response = api_response.get("responses", {}).get("customer", api_response)
+	total = response.get("total", {})
+	if isinstance(total, dict):
+		return total.get("value") or len(matches)
+	return len(matches)
 
 
 def _update_customer_status(doctype: str, docname: str, status: str):
