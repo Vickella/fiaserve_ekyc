@@ -1,5 +1,5 @@
 from frappe.model.document import Document
 
 
-class KYCCustomerType(Document):
+class KycCustomerType(Document):
 	pass
