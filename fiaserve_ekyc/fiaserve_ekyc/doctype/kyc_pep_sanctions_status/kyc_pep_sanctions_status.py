@@ -1,5 +1,4 @@
 from frappe.model.document import Document
 
-
-class KycPepSanctionsStatus(Document):
+class KYCPEPSanctionsStatus(Document):
 	pass

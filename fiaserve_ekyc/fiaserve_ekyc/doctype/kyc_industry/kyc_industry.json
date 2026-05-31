@@ -1,45 +1,45 @@
 {
-  "doctype": "DocType",
-  "name": "KYC Industry",
-  "module": "FIASERVE EKYC",
-  "autoname": "field:industry",
-  "title_field": "industry",
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "track_changes": 1,
-  "fields": [
-    {
-      "fieldname": "industry",
-      "fieldtype": "Data",
-      "label": "Industry",
-      "unique": 1,
-      "reqd": 1
-    },
-    {
-      "fieldname": "risk_score",
-      "fieldtype": "Int",
-      "label": "Risk Score",
-      "reqd": 1
-    },
-    {
-      "fieldname": "rating",
-      "fieldtype": "Select",
-      "label": "Rating",
-      "options": "Low\nMedium\nHigh\nAuto High\nMinimal Risk",
-      "reqd": 1
-    }
-  ],
-  "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1,
-      "submit": 0,
-      "cancel": 0,
-      "amend": 0
-    }
-  ],
-  "links": []
+ "doctype": "DocType",
+ "name": "KYC Industry",
+ "module": "FIASERVE eKYC",
+ "autoname": "field:industry",
+ "title_field": "industry",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "industry",
+   "fieldtype": "Data",
+   "label": "Industry",
+   "unique": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_score",
+   "fieldtype": "Int",
+   "label": "Risk Score",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rating",
+   "fieldtype": "Select",
+   "label": "Rating",
+   "options": "Low\nMedium\nHigh\nAuto High\nMinimal Risk",
+   "reqd": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0
+  }
+ ],
+ "links": []
 }
