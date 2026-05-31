@@ -1,5 +1,5 @@
 from frappe.model.document import Document
 
 
-class KYCOccupation(Document):
+class KycOccupation(Document):
 	pass
