@@ -14,6 +14,15 @@ OPENSANCTIONS_MATCH_URL = "https://api.opensanctions.org/match/default"
 OPENSANCTIONS_SEARCH_URL = "https://api.opensanctions.org/search/default"
 DATA_FIELD_MAX_LENGTH = 140
 
+SANCTIONS_LIST_NAMES = {
+	"afdb": "African Development Bank Group",
+	"adb": "Asian Development Bank",
+	"eu_fsf": "European Union Financial Sanctions Files",
+	"ofac_sdn": "Office of Foreign Assets Control Specially Designated Nationals",
+	"un_sc": "United Nations Security Council Consolidated List",
+	"worldbank": "World Bank Debarred Firms and Individuals",
+}
+
 
 def _get_headers():
 	api_key = frappe.conf.get("opensanctions_api_key", "")
@@ -93,7 +102,7 @@ def _extract_matches(api_response: dict) -> list:
 			"entity_id": _as_data(result.get("id", "")),
 			"entity_name": _as_data(_pick_display_name(result, names)),
 			"match_score": result.get("score", 0.0),
-			"datasets": _as_data(", ".join(_as_list(result.get("datasets")))),
+			"datasets": _as_data(_format_dataset_names(result.get("datasets"))),
 			"is_pep": 1 if "role.pep" in topics else 0,
 			"is_sanctioned": 1 if any(topic in topics for topic in ["sanction", "sanction.linked", "debarment"]) else 0,
 			"countries": _as_data(", ".join(_as_list(props.get("country", props.get("jurisdiction", []))))),
@@ -103,6 +112,10 @@ def _extract_matches(api_response: dict) -> list:
 			"properties_json": json.dumps(props, indent=2),
 		})
 	return matches
+
+
+def _format_dataset_names(value):
+	return ", ".join(SANCTIONS_LIST_NAMES.get(item.lower(), item) for item in _as_list(value))
 
 
 def _as_list(value):
@@ -146,21 +159,9 @@ def _determine_status(matches: list) -> str:
 
 
 def _save_screening(screening_doctype: str, link_field: str, customer_name_value: str, api_response: dict, matches: list, query: str):
-	status = "Review Required" if api_response.get("error") else _determine_status(matches)
-	doc = frappe.get_doc({
-		"doctype": screening_doctype,
-		link_field: customer_name_value,
-		"screened_on": datetime.now(),
-		"api_query": query,
-		"match_found": 1 if matches else 0,
-		"total_results": _get_total_results(api_response, matches),
-		"raw_api_response": json.dumps(api_response, indent=2),
-		"matches_table": [dict({"doctype": "Sanctions Match Entry"}, **match) for match in matches],
-		"risk_assessment": status,
-	})
-	doc.insert(ignore_permissions=True)
-	frappe.db.commit()
-	return status
+	# Screening is now stored on the customer KYC record itself; keep this helper
+	# signature for the existing callers while avoiding separate screening records.
+	return "Review Required" if api_response.get("error") else _determine_status(matches)
 
 
 def _get_total_results(api_response: dict, matches: list) -> int:
@@ -171,9 +172,39 @@ def _get_total_results(api_response: dict, matches: list) -> int:
 	return len(matches)
 
 
-def _update_customer_status(doctype: str, docname: str, status: str):
-	frappe.db.set_value(doctype, docname, {"sanctions_status": status, "sanctions_screened_on": datetime.now()})
+def _update_customer_status(doctype: str, docname: str, status: str, api_response=None, matches=None, query=None):
+	matches = matches or []
+	pep_identified = any(match.get("is_pep") for match in matches)
+	on_sanctions_list = any(match.get("is_sanctioned") for match in matches)
+	pep_status = _get_pep_sanctions_status(pep_identified, on_sanctions_list)
+	values = {
+		"sanctions_status": status,
+		"sanctions_screened_on": datetime.now(),
+		"pep_identified": 1 if pep_identified else 0,
+		"on_sanctions_list": 1 if on_sanctions_list else 0,
+		"pep_sanctions_status": pep_status,
+		"api_query": query,
+		"match_found": 1 if matches else 0,
+		"total_results": _get_total_results(api_response or {}, matches),
+		"raw_api_response": json.dumps(api_response or {}, indent=2),
+		"risk_assessment": status,
+	}
+	frappe.db.set_value(doctype, docname, values)
+	doc = frappe.get_doc(doctype, docname)
+	doc.flags._fiaserve_screening_started = True
+	doc.set("matches_table", [dict({"doctype": "Sanctions Match Entry"}, **match) for match in matches])
+	doc.save(ignore_permissions=True)
 	frappe.db.commit()
+
+
+def _get_pep_sanctions_status(pep_identified: bool, on_sanctions_list: bool):
+	if pep_identified and on_sanctions_list:
+		return "Screened, PEP identified, on Sanctions lists"
+	if on_sanctions_list:
+		return "Screened, PEP not identified, on Sanctions lists"
+	if pep_identified:
+		return "Screened, PEP identified, not on Sanctions lists"
+	return "Screened, PEP not identified, not on Sanctions lists"
 
 
 def _mark_screening_started(doc) -> bool:
@@ -188,8 +219,8 @@ def screen_individual(doc, method=None):
 		return
 	api_resp = _search_entity(doc.full_name, schema="Person")
 	matches = _extract_matches(api_resp)
-	status = _save_screening("Individual Sanctions Screening", "customer", doc.name, api_resp, matches, doc.full_name)
-	_update_customer_status("Individual Customer", doc.name, status)
+	status = _save_screening(None, "customer", doc.name, api_resp, matches, doc.full_name)
+	_update_customer_status("Individual Customer", doc.name, status, api_resp, matches, doc.full_name)
 
 
 def screen_high_risk_pep(doc, method=None):
@@ -197,8 +228,8 @@ def screen_high_risk_pep(doc, method=None):
 		return
 	api_resp = _search_entity(doc.full_name, schema="Person")
 	matches = _extract_matches(api_resp)
-	status = _save_screening("High Risk PEP Sanctions Screening", "customer", doc.name, api_resp, matches, doc.full_name)
-	_update_customer_status("High Risk PEP Individual", doc.name, status)
+	status = _save_screening(None, "customer", doc.name, api_resp, matches, doc.full_name)
+	_update_customer_status("High Risk PEP Individual", doc.name, status, api_resp, matches, doc.full_name)
 
 
 def screen_non_individual(doc, method=None):
@@ -206,8 +237,8 @@ def screen_non_individual(doc, method=None):
 		return
 	api_resp = _search_entity(doc.entity_name, schema="Organization")
 	matches = _extract_matches(api_resp)
-	status = _save_screening("Non-Individual Sanctions Screening", "customer", doc.name, api_resp, matches, doc.entity_name)
-	_update_customer_status("Non-Individual Customer", doc.name, status)
+	status = _save_screening(None, "customer", doc.name, api_resp, matches, doc.entity_name)
+	_update_customer_status("Non-Individual Customer", doc.name, status, api_resp, matches, doc.entity_name)
 
 
 def screen_high_risk_non_individual(doc, method=None):
@@ -215,8 +246,8 @@ def screen_high_risk_non_individual(doc, method=None):
 		return
 	api_resp = _search_entity(doc.entity_name, schema="Organization")
 	matches = _extract_matches(api_resp)
-	status = _save_screening("High Risk Non-Individual Sanctions Screening", "customer", doc.name, api_resp, matches, doc.entity_name)
-	_update_customer_status("High Risk Non-Individual", doc.name, status)
+	status = _save_screening(None, "customer", doc.name, api_resp, matches, doc.entity_name)
+	_update_customer_status("High Risk Non-Individual", doc.name, status, api_resp, matches, doc.entity_name)
 
 
 @frappe.whitelist()
