@@ -6,6 +6,11 @@
   "title_field": "full_name",
   "fields": [
     {
+      "fieldname": "tab_kyc_information",
+      "fieldtype": "Tab Break",
+      "label": "KYC Information"
+    },
+    {
       "fieldname": "section_personal",
       "fieldtype": "Section Break",
       "label": "Personal Information"
@@ -39,19 +44,42 @@
     {
       "fieldname": "place_of_birth",
       "fieldtype": "Data",
-      "label": "Place of Birth"
+      "label": "Place of Birth",
+      "reqd": 1
     },
     {
       "fieldname": "country_of_birth",
       "fieldtype": "Link",
       "label": "Country of Birth",
-      "options": "Country"
+      "options": "Country",
+      "reqd": 1
     },
     {
       "fieldname": "country_of_residence",
       "fieldtype": "Link",
       "label": "Country of Residence",
       "options": "Country",
+      "reqd": 1
+    },
+    {
+      "fieldname": "industry",
+      "fieldtype": "Link",
+      "label": "Industry",
+      "options": "KYC Industry",
+      "reqd": 1
+    },
+    {
+      "fieldname": "occupation",
+      "fieldtype": "Link",
+      "label": "Occupation",
+      "options": "KYC Occupation",
+      "reqd": 1
+    },
+    {
+      "fieldname": "customer_type",
+      "fieldtype": "Link",
+      "label": "Customer Type",
+      "options": "KYC Customer Type",
       "reqd": 1
     },
     {
@@ -63,57 +91,15 @@
     {
       "fieldname": "pep_designation",
       "fieldtype": "Data",
-      "label": "PEP Designation / Political Position"
+      "label": "PEP Designation / Political Position",
+      "reqd": 1
     },
     {
       "fieldname": "pep_jurisdiction",
       "fieldtype": "Link",
       "label": "PEP Jurisdiction (Country)",
-      "options": "Country"
-    },
-    {
-      "fieldname": "risk_level",
-      "fieldtype": "Select",
-      "label": "Risk Level",
-      "options": "High\nVery High",
-      "default": "High",
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "section_representative",
-      "fieldtype": "Section Break",
-      "label": "Customer Representative (Where Applicable)"
-    },
-    {
-      "fieldname": "has_representative",
-      "fieldtype": "Check",
-      "label": "Has Customer Representative"
-    },
-    {
-      "fieldname": "representative_name",
-      "fieldtype": "Data",
-      "label": "Full Name of Representative",
-      "depends_on": "eval:doc.has_representative==1"
-    },
-    {
-      "fieldname": "representative_id_type",
-      "fieldtype": "Select",
-      "label": "Representative ID Type",
-      "options": "National ID\nPassport\nDriver's Licence\nResidence Permit\nWork Permit\nRefugee Document\nOther",
-      "depends_on": "eval:doc.has_representative==1"
-    },
-    {
-      "fieldname": "representative_id_number",
-      "fieldtype": "Data",
-      "label": "Representative ID Number",
-      "depends_on": "eval:doc.has_representative==1"
-    },
-    {
-      "fieldname": "representative_capacity",
-      "fieldtype": "Select",
-      "label": "Capacity / Role",
-      "options": "Director\nShareholder\nTrustee\nSettlor\nBeneficiary\nPower of Attorney\nLegal Guardian\nOther",
-      "depends_on": "eval:doc.has_representative==1"
+      "options": "Country",
+      "reqd": 1
     },
     {
       "fieldname": "section_funds",
@@ -130,7 +116,8 @@
     {
       "fieldname": "source_of_funds_details",
       "fieldtype": "Text",
-      "label": "Source of Funds - Details"
+      "label": "Source of Funds - Details",
+      "reqd": 1
     },
     {
       "fieldname": "source_of_wealth",
@@ -139,29 +126,10 @@
       "reqd": 1
     },
     {
-      "fieldname": "section_screening",
-      "fieldtype": "Section Break",
-      "label": "Sanctions, PEP & Adverse Media Screening"
-    },
-    {
-      "fieldname": "sanctions_status",
-      "fieldtype": "Select",
-      "label": "Screening Status",
-      "options": "Pending\nClear\nMatch Found\nReview Required",
-      "default": "Pending",
-      "read_only": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "sanctions_screened_on",
-      "fieldtype": "Datetime",
-      "label": "Last Screened On",
-      "read_only": 1
-    },
-    {
       "fieldname": "adverse_media_notes",
       "fieldtype": "Text",
-      "label": "Adverse / Negative Media Screening Notes"
+      "label": "Adverse / Negative Media Screening Notes",
+      "reqd": 1
     },
     {
       "fieldname": "adverse_media_doc",
@@ -176,7 +144,8 @@
     {
       "fieldname": "financial_clearing_bureau_notes",
       "fieldtype": "Text",
-      "label": "Financial Clearing Bureau Screening Notes"
+      "label": "Financial Clearing Bureau Screening Notes",
+      "reqd": 1
     },
     {
       "fieldname": "financial_clearing_bureau_doc",
@@ -197,17 +166,20 @@
     {
       "fieldname": "approving_officer",
       "fieldtype": "Data",
-      "label": "Name of Approving Officer"
+      "label": "Name of Approving Officer",
+      "reqd": 1
     },
     {
       "fieldname": "approval_date",
       "fieldtype": "Date",
-      "label": "Approval Date"
+      "label": "Approval Date",
+      "reqd": 1
     },
     {
       "fieldname": "approval_notes",
       "fieldtype": "Text",
-      "label": "Approval Notes / Justification"
+      "label": "Approval Notes / Justification",
+      "reqd": 1
     },
     {
       "fieldname": "section_documents",
@@ -240,10 +212,142 @@
       "label": "Senior Management Sign-Off Document"
     },
     {
-      "fieldname": "representative_auth_doc",
-      "fieldtype": "Attach",
-      "label": "Representative Authorisation Document",
-      "depends_on": "eval:doc.has_representative==1"
+      "fieldname": "tab_sanction_screening",
+      "fieldtype": "Tab Break",
+      "label": "Sanction Screening"
+    },
+    {
+      "fieldname": "sanctions_status",
+      "fieldtype": "Select",
+      "label": "Screening Status",
+      "options": "Pending\nClear\nMatch Found\nReview Required",
+      "default": "Pending",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pep_identified",
+      "fieldtype": "Check",
+      "label": "PEP Identified",
+      "read_only": 1
+    },
+    {
+      "fieldname": "on_sanctions_list",
+      "fieldtype": "Check",
+      "label": "On Sanctions Lists",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pep_sanctions_status",
+      "fieldtype": "Link",
+      "label": "PEP / Sanctions Risk Status",
+      "options": "KYC PEP Sanctions Status",
+      "read_only": 1,
+      "default": "Not Screened"
+    },
+    {
+      "fieldname": "sanctions_screened_on",
+      "fieldtype": "Datetime",
+      "label": "Last Screened On",
+      "read_only": 1
+    },
+    {
+      "fieldname": "api_query",
+      "fieldtype": "Data",
+      "label": "API Query String",
+      "read_only": 1
+    },
+    {
+      "fieldname": "match_found",
+      "fieldtype": "Check",
+      "label": "Match Found",
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_results",
+      "fieldtype": "Int",
+      "label": "Total API Results",
+      "read_only": 1
+    },
+    {
+      "fieldname": "matches_table",
+      "fieldtype": "Table",
+      "label": "Matched Entities",
+      "options": "Sanctions Match Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "raw_api_response",
+      "fieldtype": "Code",
+      "label": "Raw JSON Response",
+      "options": "JSON",
+      "read_only": 1
+    },
+    {
+      "fieldname": "risk_assessment",
+      "fieldtype": "Select",
+      "label": "Risk Assessment Outcome",
+      "options": "Clear\nMatch Found\nReview Required\nFalse Positive",
+      "read_only": 1
+    },
+    {
+      "fieldname": "assessed_by",
+      "fieldtype": "Link",
+      "label": "Assessed By",
+      "options": "User"
+    },
+    {
+      "fieldname": "assessment_notes",
+      "fieldtype": "Text",
+      "label": "Assessment Notes"
+    },
+    {
+      "fieldname": "tab_risk_rating",
+      "fieldtype": "Tab Break",
+      "label": "Risk Rating"
+    },
+    {
+      "fieldname": "industry_risk_score",
+      "fieldtype": "Int",
+      "label": "Industry Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "occupation_risk_score",
+      "fieldtype": "Int",
+      "label": "Occupation Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "customer_type_risk_score",
+      "fieldtype": "Int",
+      "label": "Customer Type Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "country_risk_score",
+      "fieldtype": "Int",
+      "label": "Country / Jurisdiction Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pep_sanctions_risk_score",
+      "fieldtype": "Int",
+      "label": "PEP / Sanctions Status Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "final_risk_score",
+      "fieldtype": "Float",
+      "label": "Final Risk Score",
+      "precision": "2",
+      "read_only": 1
+    },
+    {
+      "fieldname": "final_risk_rating",
+      "fieldtype": "Select",
+      "label": "Final Client Risk Rating",
+      "options": "Low Risk\nMedium Risk\nHigh Risk",
+      "read_only": 1
     },
     {
       "fieldname": "section_meta",
@@ -265,7 +369,8 @@
     {
       "fieldname": "notes",
       "fieldtype": "Text",
-      "label": "Additional Notes"
+      "label": "Additional Notes",
+      "reqd": 1
     }
   ],
   "permissions": [
