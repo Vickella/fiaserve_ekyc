@@ -90,13 +90,27 @@ def _seed_risk_references():
 
 
 def _seed_reference_rows(doctype, title_field, rows):
-	if not frappe.db.exists("DocType", doctype):
+	table = "tab" + doctype
+	if not frappe.db.table_exists(table):
 		return
 	for title, score, rating in rows:
-		if frappe.db.exists(doctype, title):
-			frappe.db.set_value(doctype, title, {"risk_score": score, "rating": rating})
-			continue
-		frappe.get_doc({"doctype": doctype, title_field: title, "risk_score": score, "rating": rating}).insert(ignore_permissions=True)
+		existing = frappe.db.sql(
+			f"SELECT name FROM `{table}` WHERE `{title_field}` = %s LIMIT 1",
+			(title,)
+		)
+		if existing:
+			frappe.db.sql(
+				f"UPDATE `{table}` SET risk_score = %s, rating = %s WHERE `{title_field}` = %s",
+				(score, rating, title)
+			)
+		else:
+			name = frappe.generate_hash(length=10)
+			now = frappe.utils.now()
+			frappe.db.sql(
+				f"INSERT INTO `{table}` (name, `{title_field}`, risk_score, rating, creation, modified, modified_by, owner, docstatus) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 0)",
+				(name, title, score, rating, now, now, "Administrator", "Administrator")
+			)
+	frappe.db.commit()
 
 
 def _seed_country_risk_scores():
