@@ -3,3 +3,4 @@
 [post_model_sync]
 fiaserve_ekyc.patches.v1_0.create_module_on_install
 fiaserve_ekyc.patches.v1_0.cleanup_workspace_and_seed_countries
+fiaserve_ekyc.patches.v1_0.seed_risk_references
