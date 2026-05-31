@@ -9,7 +9,13 @@ from fiaserve_ekyc.fiaserve_ekyc.utils.risk_data import (
 	PEP_SANCTIONS_STATUSES,
 )
 
-COUNTRY_RISK_ROWS = [(country, score, rating) for country, (score, rating) in COUNTRY_RISK.items()]
+from fiaserve_ekyc.fiaserve_ekyc.utils.risk_data import (
+	COUNTRY_RISK,
+	CUSTOMER_TYPES,
+	INDUSTRIES,
+	OCCUPATIONS,
+	PEP_SANCTIONS_STATUSES,
+)
 
 COUNTRIES = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo (Brazzaville)', 'Congo (Kinshasa)', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Korea (North)', 'Korea (South)', 'Kosovo', 'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe']
 
@@ -80,54 +86,17 @@ def _seed_risk_references():
 	_seed_reference_rows("KYC Occupation", "occupation", OCCUPATIONS)
 	_seed_reference_rows("KYC Customer Type", "customer_type", CUSTOMER_TYPES)
 	_seed_reference_rows("KYC PEP Sanctions Status", "screening_status", PEP_SANCTIONS_STATUSES)
-	_seed_reference_rows("KYC Country Risk", "country", COUNTRY_RISK_ROWS)
 	_seed_country_risk_scores()
 
 
 def _seed_reference_rows(doctype, title_field, rows):
-	if not frappe.db.exists("DocType", doctype) or not _table_exists(doctype):
+	if not frappe.db.exists("DocType", doctype):
 		return
-
-	table = _table_name(doctype)
-	column = _column_name(title_field)
-	user = getattr(frappe.session, "user", None) or "Administrator"
 	for title, score, rating in rows:
-		timestamp = now()
-		if _row_exists(table, title):
-			frappe.db.sql(
-				f"""
-				UPDATE {table}
-				SET {column}=%s, risk_score=%s, rating=%s, modified=%s, modified_by=%s
-				WHERE name=%s
-				""",
-				(title, score, rating, timestamp, user, title),
-			)
+		if frappe.db.exists(doctype, title):
+			frappe.db.set_value(doctype, title, {"risk_score": score, "rating": rating})
 			continue
-
-		frappe.db.sql(
-			f"""
-			INSERT INTO {table}
-			(name, creation, modified, modified_by, owner, docstatus, idx, {column}, risk_score, rating)
-			VALUES (%s, %s, %s, %s, %s, 0, 0, %s, %s, %s)
-			""",
-			(title, timestamp, timestamp, user, user, title, score, rating),
-		)
-
-
-def _table_exists(doctype):
-	return bool(frappe.db.sql("SHOW TABLES LIKE %s", (f"tab{doctype}",)))
-
-
-def _row_exists(table, name):
-	return bool(frappe.db.sql(f"SELECT name FROM {table} WHERE name=%s LIMIT 1", (name,)))
-
-
-def _table_name(doctype):
-	return "`tab" + doctype.replace("`", "``") + "`"
-
-
-def _column_name(fieldname):
-	return "`" + fieldname.replace("`", "``") + "`"
+		frappe.get_doc({"doctype": doctype, title_field: title, "risk_score": score, "rating": rating}).insert(ignore_permissions=True)
 
 
 def _seed_country_risk_scores():
