@@ -1,0 +1,300 @@
+{
+  "name": "High Risk PEP Individual",
+  "module": "FIASERVE EKYC",
+  "doctype": "DocType",
+  "autoname": "format:PEP-{YYYY}-{#####}",
+  "title_field": "full_name",
+  "search_fields": "full_name,customer_type,industry,occupation",
+  "fields": [
+    {
+      "fieldname": "tab_kyc_information",
+      "fieldtype": "Tab Break",
+      "label": "KYC Information"
+    },
+    {
+      "fieldname": "section_customer_identity",
+      "fieldtype": "Section Break",
+      "label": "Customer Identity"
+    },
+    {
+      "fieldname": "full_name",
+      "fieldtype": "Data",
+      "label": "Full Name of Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer_type",
+      "fieldtype": "Link",
+      "label": "Customer Type",
+      "options": "KYC Customer Type",
+      "reqd": 1
+    },
+    {
+      "fieldname": "industry",
+      "fieldtype": "Link",
+      "label": "Industry",
+      "options": "KYC Industry",
+      "reqd": 1
+    },
+    {
+      "fieldname": "occupation",
+      "fieldtype": "Link",
+      "label": "Occupation",
+      "options": "KYC Occupation",
+      "reqd": 1
+    },
+    {
+      "fieldname": "date_of_birth",
+      "fieldtype": "Date",
+      "label": "Date of Birth",
+      "reqd": 1
+    },
+    {
+      "fieldname": "id_document_type",
+      "fieldtype": "Select",
+      "label": "ID Document Type",
+      "options": "National ID\nPassport\nResidence Permit\nWork Permit\nOther",
+      "reqd": 1
+    },
+    {
+      "fieldname": "national_id_number",
+      "fieldtype": "Data",
+      "label": "ID / Passport / Permit Number",
+      "reqd": 1
+    },
+    {
+      "fieldname": "place_of_birth",
+      "fieldtype": "Data",
+      "label": "Place of Birth",
+      "reqd": 1
+    },
+    {
+      "fieldname": "country_of_birth",
+      "fieldtype": "Link",
+      "label": "Country of Birth",
+      "options": "Country",
+      "reqd": 1
+    },
+    {
+      "fieldname": "country_of_residence",
+      "fieldtype": "Link",
+      "label": "Country of Residence",
+      "options": "Country",
+      "reqd": 1
+    },
+    {
+      "fieldname": "residential_address",
+      "fieldtype": "Text",
+      "label": "Residential Address",
+      "reqd": 1
+    },
+    {
+      "fieldname": "pep_designation",
+      "fieldtype": "Data",
+      "label": "PEP Designation / Political Position",
+      "reqd": 1
+    },
+    {
+      "fieldname": "pep_jurisdiction",
+      "fieldtype": "Link",
+      "label": "PEP Jurisdiction (Country)",
+      "options": "Country",
+      "reqd": 1
+    },
+    {
+      "fieldname": "section_funds",
+      "fieldtype": "Section Break",
+      "label": "Funds and Wealth"
+    },
+    {
+      "fieldname": "source_of_funds",
+      "fieldtype": "Text",
+      "label": "Source of Funds",
+      "reqd": 1
+    },
+    {
+      "fieldname": "source_of_wealth",
+      "fieldtype": "Text",
+      "label": "Source of Wealth",
+      "reqd": 1
+    },
+    {
+      "fieldname": "section_documents",
+      "fieldtype": "Section Break",
+      "label": "Mandatory Supporting Documents"
+    },
+    {
+      "fieldname": "id_document_upload",
+      "fieldtype": "Attach",
+      "label": "ID Document / Passport / Permit",
+      "reqd": 1
+    },
+    {
+      "fieldname": "proof_of_address",
+      "fieldtype": "Attach",
+      "label": "Proof of Address",
+      "reqd": 1
+    },
+    {
+      "fieldname": "source_of_funds_doc",
+      "fieldtype": "Attach",
+      "label": "Source of Funds Document",
+      "reqd": 1
+    },
+    {
+      "fieldname": "source_of_wealth_doc",
+      "fieldtype": "Attach",
+      "label": "Source of Wealth Document",
+      "reqd": 1
+    },
+    {
+      "fieldname": "senior_management_signoff",
+      "fieldtype": "Attach",
+      "label": "Senior Management Sign-off",
+      "reqd": 1
+    },
+    {
+      "fieldname": "tab_sanction_screening",
+      "fieldtype": "Tab Break",
+      "label": "Sanction Screening"
+    },
+    {
+      "fieldname": "section_screening",
+      "fieldtype": "Section Break",
+      "label": "Sanctions and PEP Screening"
+    },
+    {
+      "fieldname": "owner_screening_status",
+      "fieldtype": "Link",
+      "label": "PEP and Sanctions Status",
+      "options": "KYC PEP Sanctions Status",
+      "reqd": 1,
+      "default": "Not Screened"
+    },
+    {
+      "fieldname": "sanctions_status",
+      "fieldtype": "Select",
+      "label": "Screening Result",
+      "options": "Pending\nClear\nMatch Found\nReview Required",
+      "default": "Pending",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "sanctions_list",
+      "fieldtype": "Select",
+      "label": "Sanctions List",
+      "options": "United Nations Security Council Consolidated List\nAfrican Development Bank Group Sanctions List\nEuropean Union Consolidated Financial Sanctions List\nOffice of Foreign Assets Control Specially Designated Nationals and Blocked Persons List\nUnited Kingdom HM Treasury Consolidated List\nWorld Bank Listing of Ineligible Firms and Individuals\nOther Official Sanctions List",
+      "reqd": 1
+    },
+    {
+      "fieldname": "sanctions_screening_reference",
+      "fieldtype": "Data",
+      "label": "Sanctions Screening Reference",
+      "reqd": 1
+    },
+    {
+      "fieldname": "sanctions_screening_evidence",
+      "fieldtype": "Attach",
+      "label": "Sanctions Screening Screenshot or Printout",
+      "reqd": 1
+    },
+    {
+      "fieldname": "sanctions_screened_on",
+      "fieldtype": "Datetime",
+      "label": "Last Screened On",
+      "read_only": 1
+    },
+    {
+      "fieldname": "adverse_media_status",
+      "fieldtype": "Select",
+      "label": "Adverse Media Status",
+      "options": "Not Screened\nNo Adverse Media Found\nAdverse Media Found\nReview Required",
+      "default": "Not Screened",
+      "reqd": 1
+    },
+    {
+      "fieldname": "adverse_media_evidence",
+      "fieldtype": "Attach",
+      "label": "Adverse Media / Internet Search Evidence",
+      "reqd": 1
+    },
+    {
+      "fieldname": "tab_risk_rating",
+      "fieldtype": "Tab Break",
+      "label": "Risk Rating"
+    },
+    {
+      "fieldname": "section_risk_components",
+      "fieldtype": "Section Break",
+      "label": "Risk Rating Components"
+    },
+    {
+      "fieldname": "industry_risk_score",
+      "fieldtype": "Int",
+      "label": "Industry Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "occupation_risk_score",
+      "fieldtype": "Int",
+      "label": "Occupation Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "customer_type_risk_score",
+      "fieldtype": "Int",
+      "label": "Customer Type Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "country_risk_score",
+      "fieldtype": "Int",
+      "label": "Country / Jurisdiction Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pep_sanctions_risk_score",
+      "fieldtype": "Int",
+      "label": "PEP / Sanctions Status Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "risk_score_average",
+      "fieldtype": "Float",
+      "label": "Simple Average Risk Score",
+      "read_only": 1,
+      "precision": "2"
+    },
+    {
+      "fieldname": "final_risk_rating",
+      "fieldtype": "Select",
+      "label": "Final Client Risk Rating",
+      "options": "Low Risk\nMedium Risk\nHigh Risk",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "risk_rating_notes",
+      "fieldtype": "Text",
+      "label": "Risk Rating Notes",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "All",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}
