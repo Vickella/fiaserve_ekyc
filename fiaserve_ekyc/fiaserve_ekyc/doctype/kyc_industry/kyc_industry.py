@@ -1,5 +1,5 @@
 from frappe.model.document import Document
 
 
-class KYCIndustry(Document):
+class KycIndustry(Document):
 	pass
