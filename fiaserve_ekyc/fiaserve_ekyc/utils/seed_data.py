@@ -95,20 +95,19 @@ def _seed_reference_rows(doctype, title_field, rows):
 		return
 	for title, score, rating in rows:
 		existing = frappe.db.sql(
-			f"SELECT name FROM `{table}` WHERE `{title_field}` = %s LIMIT 1",
+			f"SELECT name FROM `{table}` WHERE name = %s LIMIT 1",
 			(title,)
 		)
 		if existing:
 			frappe.db.sql(
-				f"UPDATE `{table}` SET risk_score = %s, rating = %s WHERE `{title_field}` = %s",
+				f"UPDATE `{table}` SET risk_score = %s, rating = %s WHERE name = %s",
 				(score, rating, title)
 			)
 		else:
-			name = frappe.generate_hash(length=10)
 			now = frappe.utils.now()
 			frappe.db.sql(
 				f"INSERT INTO `{table}` (name, `{title_field}`, risk_score, rating, creation, modified, modified_by, owner, docstatus) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 0)",
-				(name, title, score, rating, now, now, "Administrator", "Administrator")
+				(title, title, score, rating, now, now, "Administrator", "Administrator")
 			)
 	frappe.db.commit()
 
