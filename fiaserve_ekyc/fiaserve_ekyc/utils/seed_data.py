@@ -91,7 +91,9 @@ def _seed_risk_references():
 
 def _seed_reference_rows(doctype, title_field, rows):
 	table = "tab" + doctype
-	if not frappe.db.table_exists(table):
+	try:
+		frappe.db.sql(f"SELECT 1 FROM `{table}` LIMIT 1")
+	except Exception:
 		return
 	for title, score, rating in rows:
 		existing = frappe.db.sql(
