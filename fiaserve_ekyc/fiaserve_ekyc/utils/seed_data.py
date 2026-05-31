@@ -1,4 +1,13 @@
 import frappe
+from frappe.utils import now
+
+from fiaserve_ekyc.fiaserve_ekyc.utils.risk_data import (
+	COUNTRY_RISK,
+	CUSTOMER_TYPES,
+	INDUSTRIES,
+	OCCUPATIONS,
+	PEP_SANCTIONS_STATUSES,
+)
 
 from fiaserve_ekyc.fiaserve_ekyc.utils.risk_data import (
 	COUNTRY_RISK,
