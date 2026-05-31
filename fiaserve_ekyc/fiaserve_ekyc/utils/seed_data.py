@@ -9,7 +9,13 @@ from fiaserve_ekyc.fiaserve_ekyc.utils.risk_data import (
 	PEP_SANCTIONS_STATUSES,
 )
 
-COUNTRY_RISK_ROWS = [(country, score, rating) for country, (score, rating) in COUNTRY_RISK.items()]
+from fiaserve_ekyc.fiaserve_ekyc.utils.risk_data import (
+	COUNTRY_RISK,
+	CUSTOMER_TYPES,
+	INDUSTRIES,
+	OCCUPATIONS,
+	PEP_SANCTIONS_STATUSES,
+)
 
 COUNTRIES = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo (Brazzaville)', 'Congo (Kinshasa)', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Korea (North)', 'Korea (South)', 'Kosovo', 'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe']
 
@@ -69,17 +75,9 @@ def ensure_country(name):
 	if existing:
 		return existing
 
-	if not frappe.db.table_exists("tabCountry"):
-		return name
-	frappe.db.sql(
-		"""
-		INSERT INTO `tabCountry`
-		(name, country_name, creation, modified, modified_by, owner, docstatus, idx)
-		VALUES (%s, %s, %s, %s, %s, %s, 0, 0)
-		""",
-		(name, name, frappe.utils.now(), frappe.utils.now(), "Administrator", "Administrator"),
-	)
-	return name
+	doc = frappe.get_doc({"doctype": "Country", "country_name": name})
+	doc.insert(ignore_permissions=True)
+	return doc.name
 
 
 
@@ -88,34 +86,17 @@ def _seed_risk_references():
 	_seed_reference_rows("KYC Occupation", "occupation", OCCUPATIONS)
 	_seed_reference_rows("KYC Customer Type", "customer_type", CUSTOMER_TYPES)
 	_seed_reference_rows("KYC PEP Sanctions Status", "screening_status", PEP_SANCTIONS_STATUSES)
-	_seed_reference_rows("KYC Country Risk", "country", COUNTRY_RISK_ROWS)
 	_seed_country_risk_scores()
 
 
 def _seed_reference_rows(doctype, title_field, rows):
-	table = f"tab{doctype}"
-	if not frappe.db.table_exists(table):
+	if not frappe.db.exists("DocType", doctype):
 		return
 	for title, score, rating in rows:
-		existing = frappe.db.sql(
-			f"SELECT name FROM `{table}` WHERE `{title_field}` = %s LIMIT 1",
-			(title,),
-		)
-		if existing:
-			frappe.db.sql(
-				f"UPDATE `{table}` SET risk_score = %s, rating = %s WHERE `{title_field}` = %s",
-				(score, rating, title),
-			)
-		else:
-			import time
-
-			name = frappe.generate_hash(length=10)
-			now = frappe.utils.now()
-			frappe.db.sql(
-				f"INSERT INTO `{table}` (name, `{title_field}`, risk_score, rating, creation, modified, modified_by, owner, docstatus) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 0)",
-				(name, title, score, rating, now, now, "Administrator", "Administrator"),
-			)
-	frappe.db.commit()
+		if frappe.db.exists(doctype, title):
+			frappe.db.set_value(doctype, title, {"risk_score": score, "rating": rating})
+			continue
+		frappe.get_doc({"doctype": doctype, title_field: title, "risk_score": score, "rating": rating}).insert(ignore_permissions=True)
 
 
 def _seed_country_risk_scores():
@@ -135,26 +116,13 @@ def ensure_country_risk_fields():
 		("kyc_risk_score", "KYC Risk Score", "Int", None),
 		("kyc_risk_rating", "KYC Risk Rating", "Select", "Low\nMedium\nHigh\nAuto High"),
 	):
-		if not frappe.db.exists("Custom Field", {"dt": "Country", "fieldname": fieldname}) and frappe.db.table_exists("tabCustom Field"):
-			name = f"Country-{fieldname}"
-			timestamp = frappe.utils.now()
-			frappe.db.sql(
-				"""
-				INSERT INTO `tabCustom Field`
-				(name, dt, fieldname, label, fieldtype, options, creation, modified, modified_by, owner, docstatus, idx)
-				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 0)
-				""",
-				(name, "Country", fieldname, label, fieldtype, options, timestamp, timestamp, "Administrator", "Administrator"),
-			)
-		_ensure_country_column(fieldname, fieldtype)
-
-
-def _ensure_country_column(fieldname, fieldtype):
-	if not frappe.db.table_exists("tabCountry") or _country_column_exists(fieldname):
-		return
-	column_type = "int(11)" if fieldtype == "Int" else "varchar(140)"
-	frappe.db.sql(f"ALTER TABLE `tabCountry` ADD COLUMN `{fieldname}` {column_type}")
-
-
-def _country_column_exists(fieldname):
-	return bool(frappe.db.sql("SHOW COLUMNS FROM `tabCountry` LIKE %s", (fieldname,)))
+		if frappe.db.exists("Custom Field", {"dt": "Country", "fieldname": fieldname}):
+			continue
+		frappe.get_doc({
+			"doctype": "Custom Field",
+			"dt": "Country",
+			"fieldname": fieldname,
+			"label": label,
+			"fieldtype": fieldtype,
+			"options": options,
+		}).insert(ignore_permissions=True)

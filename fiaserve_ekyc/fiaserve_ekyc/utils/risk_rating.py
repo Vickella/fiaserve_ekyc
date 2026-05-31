@@ -58,20 +58,9 @@ def _get_reference_score(doctype, name):
 
 
 def _get_country_score(country):
-	if not country:
+	if not country or not frappe.db.exists("DocType", "Country"):
 		return None
-
-	if frappe.db.exists("DocType", "Country"):
-		score = frappe.db.get_value("Country", country, "kyc_risk_score")
-		if score:
-			return score
-
-	if frappe.db.exists("DocType", "KYC Country Risk"):
-		score = frappe.db.get_value("KYC Country Risk", country, "risk_score")
-		if score:
-			return score
-
-	return 5
+	return frappe.db.get_value("Country", country, "kyc_risk_score") or 5
 
 
 def _get_customer_country(doc):
