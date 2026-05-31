@@ -27,9 +27,19 @@ function populateCountries(fieldIds) {
 
 function toggleSection(sectionId, show) {
   const el = document.getElementById(sectionId);
-  if (el) el.style.display = show ? "block" : "none";
+  if (el) {
+    el.style.display = show ? "block" : "none";
+    el.querySelectorAll("input, select, textarea").forEach(field => {
+      if (field.type !== "checkbox") field.required = !!show;
+    });
+  }
   const repDoc = document.getElementById("rep-doc-field");
-  if (repDoc) repDoc.style.display = show ? "block" : "none";
+  if (repDoc) {
+    repDoc.style.display = show ? "block" : "none";
+    repDoc.querySelectorAll("input, select, textarea").forEach(field => {
+      field.required = !!show;
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -109,6 +119,10 @@ async function uploadFile(file, doctype, docname, fieldname) {
 async function submitKYCForm(doctype) {
   const form = document.getElementById("kyc-form");
   if (!form) return;
+  if (document.getElementById("principals-table-body") && !document.querySelector("#principals-table-body tr")) {
+    showAlert("At least one director, shareholder, trustee, or beneficiary is required.", "error");
+    return;
+  }
   if (!form.checkValidity()) {
     form.reportValidity();
     return;
@@ -182,11 +196,11 @@ function addPrincipalRow() {
   if (!tbody) return;
   const tr = document.createElement("tr");
   tr.innerHTML = `
-    <td><input type="text" name="principal_name" placeholder="Full name"></td>
-    <td><select name="role"><option>Director</option><option>Shareholder</option><option>Trustee</option><option>Settlor</option><option>Beneficiary</option><option>Signatory</option><option>Other</option></select></td>
-    <td><select name="id_type"><option>National ID</option><option>Passport</option><option>Driver's Licence</option><option>Residence Permit</option><option>Work Permit</option><option>Other</option></select></td>
-    <td><input type="text" name="id_number" placeholder="ID Number"></td>
-    <td><select name="nationality">${COUNTRIES.map(c => `<option>${c}</option>`).join("")}</select></td>
+    <td><input type="text" name="principal_name" placeholder="Full name" required></td>
+    <td><select name="role" required><option>Director</option><option>Shareholder</option><option>Trustee</option><option>Settlor</option><option>Beneficiary</option><option>Signatory</option><option>Other</option></select></td>
+    <td><select name="id_type" required><option>National ID</option><option>Passport</option><option>Driver's Licence</option><option>Residence Permit</option><option>Work Permit</option><option>Other</option></select></td>
+    <td><input type="text" name="id_number" placeholder="ID Number" required></td>
+    <td><select name="nationality" required>${COUNTRIES.map(c => `<option>${c}</option>`).join("")}</select></td>
     <td><button type="button" onclick="this.closest('tr').remove()">Remove</button></td>
   `;
   tbody.appendChild(tr);
