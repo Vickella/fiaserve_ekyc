@@ -12,13 +12,6 @@ ALLOWED_DOCTYPES = {
 }
 
 
-SCREENING_DOCTYPES = {
-	"Individual Customer": "Individual Sanctions Screening",
-	"High Risk PEP Individual": "High Risk PEP Sanctions Screening",
-	"Non-Individual Customer": "Non-Individual Sanctions Screening",
-	"High Risk Non-Individual": "High Risk Non-Individual Sanctions Screening",
-}
-
 
 @frappe.whitelist(allow_guest=True)
 def submit_kyc(doctype, doc):
@@ -32,16 +25,16 @@ def submit_kyc(doctype, doc):
 
 	clean_doc = _clean_doc(doctype, doc)
 	_resolve_country_links(doctype, clean_doc)
+	clean_doc.setdefault("pep_sanctions_status", "Not Screened")
 	created = frappe.get_doc(clean_doc)
 	created.insert(ignore_permissions=True)
 	frappe.db.commit()
 
-	screening_doctype = SCREENING_DOCTYPES[doctype]
 	return {
 		"name": created.name,
 		"doctype": doctype,
 		"sanctions_status": frappe.db.get_value(doctype, created.name, "sanctions_status"),
-		"screening_count": frappe.db.count(screening_doctype, {"customer": created.name}),
+		"screening_count": 1 if frappe.db.get_value(doctype, created.name, "sanctions_screened_on") else 0,
 	}
 
 
