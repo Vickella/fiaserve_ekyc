@@ -14,6 +14,46 @@ OPENSANCTIONS_MATCH_URL = "https://api.opensanctions.org/match/default"
 OPENSANCTIONS_SEARCH_URL = "https://api.opensanctions.org/search/default"
 DATA_FIELD_MAX_LENGTH = 140
 
+DATASET_LABELS = {
+	"un_sc_sanctions": "UN Security Council Sanctions",
+	"un_consolidated": "UN Consolidated Sanctions List",
+	"us_ofac_sdn": "US OFAC Specially Designated Nationals",
+	"us_ofac_cons": "US OFAC Consolidated Sanctions",
+	"us_bis_denied": "US BIS Denied Persons List",
+	"us_doj_wmo": "US DOJ Most Wanted",
+	"us_state_debarment": "US State Department Debarment",
+	"eu_fsf": "EU Financial Sanctions Files",
+	"eu_eeas_sanctions": "EU EEAS Sanctions",
+	"gb_hmt_sanctions": "UK HM Treasury Sanctions",
+	"gb_fcdo_sanctions": "UK FCDO Sanctions",
+	"afdb_sanctions": "African Development Bank Sanctions",
+	"au_dfat_sanctions": "Australia DFAT Sanctions",
+	"br_pep": "Brazil PEP List",
+	"br_ceis": "Brazil CEIS Sanctions",
+	"br_cepim": "Brazil CEPIM Sanctions",
+	"br_cnep": "Brazil CNEP Sanctions",
+	"br_tcu_inabilitados": "Brazil TCU Inabilitados",
+	"ar_repet": "Argentina REPET Sanctions",
+	"ar_cancilleria_reune": "Argentina Cancilleria REUNE",
+	"ann_pep_positions": "Annual PEP Positions",
+	"wd_pep": "Wikidata PEP List",
+	"every_politician": "EveryPolitician PEP List",
+	"interpol_red_notices": "Interpol Red Notices",
+	"interpol_yellow_notices": "Interpol Yellow Notices",
+	"gb_coh_disqualified": "UK Companies House Disqualified Directors",
+	"ch_seco_sanctions": "Switzerland SECO Sanctions",
+	"ca_osfi_sanctions": "Canada OSFI Sanctions",
+	"jp_mof_sanctions": "Japan MOF Sanctions",
+	"ru_rupep": "Russia RuPEP List",
+	"ua_nacp_pep": "Ukraine NACP PEP List",
+	"kg_fiu_sanctions": "Kyrgyzstan FIU Sanctions",
+	"kz_afmrk_sanctions": "Kazakhstan AFM Sanctions",
+	"sg_mas_sanctions": "Singapore MAS Sanctions",
+	"in_mha_sanctions": "India MHA Sanctions",
+	"ng_efcc_sanctions": "Nigeria EFCC Sanctions",
+	"zw_rba_sanctions": "Zimbabwe RBZ Sanctions",
+}
+
 SANCTIONS_LIST_NAMES = {
 	"afdb": "African Development Bank Group",
 	"adb": "Asian Development Bank",
@@ -115,7 +155,7 @@ def _extract_matches(api_response: dict) -> list:
 
 
 def _format_dataset_names(value):
-	return ", ".join(SANCTIONS_LIST_NAMES.get(item.lower(), item) for item in _as_list(value))
+	return ", ".join(DATASET_LABELS.get(code, code) for code in _as_list(value))
 
 
 def _as_list(value):
