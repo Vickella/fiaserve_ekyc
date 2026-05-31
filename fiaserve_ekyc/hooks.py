@@ -24,6 +24,7 @@ add_to_apps_screen = [
 ]
 
 after_install = "fiaserve_ekyc.fiaserve_ekyc.utils.seed_data.after_install"
+after_migrate = "fiaserve_ekyc.fiaserve_ekyc.utils.seed_data.after_migrate"
 
 doc_events = {
 	"Individual Customer": {

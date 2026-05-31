@@ -6,6 +6,11 @@
   "title_field": "entity_name",
   "fields": [
     {
+      "fieldname": "tab_kyc_information",
+      "fieldtype": "Tab Break",
+      "label": "KYC Information"
+    },
+    {
       "fieldname": "section_entity",
       "fieldtype": "Section Break",
       "label": "Entity Information"
@@ -33,12 +38,14 @@
     {
       "fieldname": "date_of_incorporation",
       "fieldtype": "Date",
-      "label": "Date of Incorporation"
+      "label": "Date of Incorporation",
+      "reqd": 1
     },
     {
       "fieldname": "place_of_incorporation",
       "fieldtype": "Data",
-      "label": "Place of Incorporation"
+      "label": "Place of Incorporation",
+      "reqd": 1
     },
     {
       "fieldname": "country_of_incorporation",
@@ -57,15 +64,29 @@
       "fieldname": "country_of_operations",
       "fieldtype": "Link",
       "label": "Place / Country of Business Operations",
-      "options": "Country"
+      "options": "Country",
+      "reqd": 1
     },
     {
-      "fieldname": "risk_level",
-      "fieldtype": "Select",
-      "label": "Risk Level",
-      "options": "High\nVery High",
-      "default": "High",
-      "in_list_view": 1
+      "fieldname": "industry",
+      "fieldtype": "Link",
+      "label": "Industry",
+      "options": "KYC Industry",
+      "reqd": 1
+    },
+    {
+      "fieldname": "occupation",
+      "fieldtype": "Link",
+      "label": "Occupation",
+      "options": "KYC Occupation",
+      "reqd": 1
+    },
+    {
+      "fieldname": "customer_type",
+      "fieldtype": "Link",
+      "label": "Customer Type",
+      "options": "KYC Customer Type",
+      "reqd": 1
     },
     {
       "fieldname": "section_principals",
@@ -92,14 +113,16 @@
       "fieldname": "representative_name",
       "fieldtype": "Data",
       "label": "Full Name of Representative",
-      "depends_on": "eval:doc.has_representative==1"
+      "depends_on": "eval:doc.has_representative==1",
+      "mandatory_depends_on": "eval:doc.has_representative==1"
     },
     {
       "fieldname": "representative_capacity",
       "fieldtype": "Select",
       "label": "Capacity / Role",
       "options": "Director\nShareholder\nTrustee\nSettlor\nBeneficiary\nPower of Attorney\nLegal Guardian\nOther",
-      "depends_on": "eval:doc.has_representative==1"
+      "depends_on": "eval:doc.has_representative==1",
+      "mandatory_depends_on": "eval:doc.has_representative==1"
     },
     {
       "fieldname": "section_funds",
@@ -116,37 +139,20 @@
     {
       "fieldname": "source_of_funds_details",
       "fieldtype": "Text",
-      "label": "Source of Funds - Details"
+      "label": "Source of Funds - Details",
+      "reqd": 1
     },
     {
       "fieldname": "tax_status",
       "fieldtype": "Data",
-      "label": "Tax Status / TIN Number"
+      "label": "Tax Status / TIN Number",
+      "reqd": 1
     },
     {
       "fieldname": "tax_compliance_notes",
       "fieldtype": "Text",
-      "label": "Tax Compliance Notes"
-    },
-    {
-      "fieldname": "section_screening",
-      "fieldtype": "Section Break",
-      "label": "Sanctions & PEP Screening"
-    },
-    {
-      "fieldname": "sanctions_status",
-      "fieldtype": "Select",
-      "label": "Screening Status",
-      "options": "Pending\nClear\nMatch Found\nReview Required",
-      "default": "Pending",
-      "read_only": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "sanctions_screened_on",
-      "fieldtype": "Datetime",
-      "label": "Last Screened On",
-      "read_only": 1
+      "label": "Tax Compliance Notes",
+      "reqd": 1
     },
     {
       "fieldname": "section_wealth",
@@ -178,17 +184,20 @@
     {
       "fieldname": "approving_officer",
       "fieldtype": "Data",
-      "label": "Name of Approving Officer"
+      "label": "Name of Approving Officer",
+      "reqd": 1
     },
     {
       "fieldname": "approval_date",
       "fieldtype": "Date",
-      "label": "Approval Date"
+      "label": "Approval Date",
+      "reqd": 1
     },
     {
       "fieldname": "approval_notes",
       "fieldtype": "Text",
-      "label": "Approval Notes / Justification"
+      "label": "Approval Notes / Justification",
+      "reqd": 1
     },
     {
       "fieldname": "senior_mgmt_signoff_doc",
@@ -244,12 +253,151 @@
       "fieldname": "representative_auth_doc",
       "fieldtype": "Attach",
       "label": "Representative Authorisation Document",
-      "depends_on": "eval:doc.has_representative==1"
+      "depends_on": "eval:doc.has_representative==1",
+      "mandatory_depends_on": "eval:doc.has_representative==1"
     },
     {
       "fieldname": "directors_id_docs",
       "fieldtype": "Attach",
       "label": "Directors / Principals ID Documents"
+    },
+    {
+      "fieldname": "tab_sanction_screening",
+      "fieldtype": "Tab Break",
+      "label": "Sanction Screening"
+    },
+    {
+      "fieldname": "sanctions_status",
+      "fieldtype": "Select",
+      "label": "Screening Status",
+      "options": "Pending\nClear\nMatch Found\nReview Required",
+      "default": "Pending",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pep_identified",
+      "fieldtype": "Check",
+      "label": "PEP Identified",
+      "read_only": 1
+    },
+    {
+      "fieldname": "on_sanctions_list",
+      "fieldtype": "Check",
+      "label": "On Sanctions Lists",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pep_sanctions_status",
+      "fieldtype": "Link",
+      "label": "PEP / Sanctions Risk Status",
+      "options": "KYC PEP Sanctions Status",
+      "read_only": 1,
+      "default": "Not Screened"
+    },
+    {
+      "fieldname": "sanctions_screened_on",
+      "fieldtype": "Datetime",
+      "label": "Last Screened On",
+      "read_only": 1
+    },
+    {
+      "fieldname": "api_query",
+      "fieldtype": "Data",
+      "label": "API Query String",
+      "read_only": 1
+    },
+    {
+      "fieldname": "match_found",
+      "fieldtype": "Check",
+      "label": "Match Found",
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_results",
+      "fieldtype": "Int",
+      "label": "Total API Results",
+      "read_only": 1
+    },
+    {
+      "fieldname": "matches_table",
+      "fieldtype": "Table",
+      "label": "Matched Entities",
+      "options": "Sanctions Match Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "raw_api_response",
+      "fieldtype": "Code",
+      "label": "Raw JSON Response",
+      "options": "JSON",
+      "read_only": 1
+    },
+    {
+      "fieldname": "risk_assessment",
+      "fieldtype": "Select",
+      "label": "Risk Assessment Outcome",
+      "options": "Clear\nMatch Found\nReview Required\nFalse Positive",
+      "read_only": 1
+    },
+    {
+      "fieldname": "assessed_by",
+      "fieldtype": "Link",
+      "label": "Assessed By",
+      "options": "User"
+    },
+    {
+      "fieldname": "assessment_notes",
+      "fieldtype": "Text",
+      "label": "Assessment Notes"
+    },
+    {
+      "fieldname": "tab_risk_rating",
+      "fieldtype": "Tab Break",
+      "label": "Risk Rating"
+    },
+    {
+      "fieldname": "industry_risk_score",
+      "fieldtype": "Int",
+      "label": "Industry Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "occupation_risk_score",
+      "fieldtype": "Int",
+      "label": "Occupation Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "customer_type_risk_score",
+      "fieldtype": "Int",
+      "label": "Customer Type Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "country_risk_score",
+      "fieldtype": "Int",
+      "label": "Country / Jurisdiction Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "pep_sanctions_risk_score",
+      "fieldtype": "Int",
+      "label": "PEP / Sanctions Status Risk Score",
+      "read_only": 1
+    },
+    {
+      "fieldname": "final_risk_score",
+      "fieldtype": "Float",
+      "label": "Final Risk Score",
+      "precision": "2",
+      "read_only": 1
+    },
+    {
+      "fieldname": "final_risk_rating",
+      "fieldtype": "Select",
+      "label": "Final Client Risk Rating",
+      "options": "Low Risk\nMedium Risk\nHigh Risk",
+      "read_only": 1
     },
     {
       "fieldname": "section_meta",
@@ -271,7 +419,8 @@
     {
       "fieldname": "notes",
       "fieldtype": "Text",
-      "label": "Additional Notes"
+      "label": "Additional Notes",
+      "reqd": 1
     }
   ],
   "permissions": [
